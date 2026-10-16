@@ -3,1557 +3,542 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ONCO-HOLO PRO — Clinical Decision Support v5.0</title>
+<title>ONCO-HOLO PRO v6.0 — Ultimate Edition</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
-    --cyan: #00e5ff;
-    --cyan-dim: #0095aa;
-    --red: #ff3b6b;
-    --yellow: #ffd93b;
-    --green: #00ff9d;
-    --purple: #a855f7;
-    --orange: #ff8b3b;
-    --pink: #ff5cc8;
-    --bg: #030812;
-    --panel: rgba(6, 18, 34, 0.82);
-    --panel-2: rgba(10, 24, 44, 0.9);
-    --border: rgba(0, 229, 255, 0.22);
-    --border-strong: rgba(0, 229, 255, 0.5);
-    --text: #c9e8f5;
-    --text-dim: #6a8fa3;
-    --grid-line: rgba(0, 229, 255, 0.06);
+    --cyan: #00e5ff; --cyan-dim: #0095aa;
+    --red: #ff3b6b; --yellow: #ffd93b; --green: #00ff9d;
+    --purple: #a855f7; --orange: #ff8b3b; --pink: #ff5cc8;
+    --bg: #030812; --panel: rgba(6, 18, 34, 0.82); --panel-2: rgba(10, 24, 44, 0.9);
+    --border: rgba(0, 229, 255, 0.22); --border-strong: rgba(0, 229, 255, 0.5);
+    --text: #c9e8f5; --text-dim: #6a8fa3; --grid-line: rgba(0, 229, 255, 0.06);
   }
-
   html, body {
-    height: 100%;
-    overflow: hidden;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'SF Mono', 'Courier New', monospace;
-    font-size: 12px;
-    user-select: none;
+    height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
+    font-family: 'SF Mono', 'Courier New', monospace; font-size: 12px; user-select: none;
   }
-
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--grid-line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
   }
 
-  /* ============================================================
-     LOGIN SCREEN
-     ============================================================ */
+  /* ========== LOGIN ========== */
   #loginScreen {
-    position: fixed;
-    inset: 0;
-    z-index: 5000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background:
-      radial-gradient(ellipse at center, #061426 0%, #020610 60%, #000 100%);
+    position: fixed; inset: 0; z-index: 5000;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at center, #061426 0%, #020610 60%, #000 100%);
     transition: opacity 0.6s;
   }
-
-  #loginScreen.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-
+  #loginScreen.hidden { opacity: 0; pointer-events: none; }
   .login-bg-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0, 229, 255, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 229, 255, 0.08) 1px, transparent 1px);
-    background-size: 50px 50px;
-    perspective: 500px;
-    animation: gridScroll 8s linear infinite;
-    opacity: 0.5;
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(0, 229, 255, 0.08) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0, 229, 255, 0.08) 1px, transparent 1px);
+    background-size: 50px 50px; animation: gridScroll 8s linear infinite; opacity: 0.5;
   }
-
-  @keyframes gridScroll {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 50px; }
-  }
-
+  @keyframes gridScroll { 0% { background-position: 0 0; } 100% { background-position: 0 50px; } }
   .login-container {
-    position: relative;
-    z-index: 2;
-    background: rgba(6, 18, 34, 0.9);
-    border: 1px solid var(--border-strong);
-    border-radius: 6px;
-    backdrop-filter: blur(20px);
-    box-shadow:
-      0 0 80px rgba(0, 229, 255, 0.25),
-      inset 0 0 40px rgba(0, 229, 255, 0.04);
-    width: 440px;
-    padding: 40px 36px;
-    animation: loginFadeIn 0.8s ease-out;
+    position: relative; z-index: 2;
+    background: rgba(6, 18, 34, 0.9); border: 1px solid var(--border-strong);
+    border-radius: 6px; backdrop-filter: blur(20px);
+    box-shadow: 0 0 80px rgba(0, 229, 255, 0.25), inset 0 0 40px rgba(0, 229, 255, 0.04);
+    width: 460px; padding: 40px 36px; animation: loginFadeIn 0.8s ease-out;
   }
-
-  @keyframes loginFadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
+  @keyframes loginFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   .login-logo {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 20px;
-    border: 2px solid var(--cyan);
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 30px var(--cyan), inset 0 0 20px rgba(0, 229, 255, 0.3);
+    width: 72px; height: 72px; margin: 0 auto 20px; border: 2px solid var(--cyan);
+    border-radius: 50%; position: relative; box-shadow: 0 0 30px var(--cyan), inset 0 0 20px rgba(0, 229, 255, 0.3);
     animation: spin 12s linear infinite;
   }
-
   .login-logo::after {
-    content: '';
-    position: absolute;
-    inset: 12px;
-    border-radius: 50%;
+    content: ''; position: absolute; inset: 12px; border-radius: 50%;
     background: radial-gradient(circle, var(--red), var(--red) 40%, transparent 70%);
-    box-shadow: 0 0 20px var(--red);
-    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--red); animation: pulse 2s ease-in-out infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.9); }
-  }
-
-  .login-title {
-    text-align: center;
-    font-size: 20px;
-    letter-spacing: 4px;
-    font-weight: bold;
-    color: var(--cyan);
-    margin-bottom: 4px;
-    text-shadow: 0 0 20px var(--cyan);
-  }
-
-  .login-subtitle {
-    text-align: center;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-bottom: 30px;
-  }
-
-  .login-role-tabs {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-bottom: 20px;
-  }
-
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.9); } }
+  .login-title { text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: bold; color: var(--cyan); margin-bottom: 4px; text-shadow: 0 0 20px var(--cyan); }
+  .login-subtitle { text-align: center; font-size: 10px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 30px; }
+  .login-role-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px; }
   .role-tab {
-    padding: 10px 6px;
-    background: rgba(0, 229, 255, 0.04);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text-dim);
-    font-family: inherit;
-    font-size: 9px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-align: center;
+    padding: 10px 6px; background: rgba(0, 229, 255, 0.04); border: 1px solid var(--border);
+    border-radius: 4px; color: var(--text-dim); font-family: inherit; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.25s; text-align: center;
   }
-
-  .role-tab .role-icon {
-    display: block;
-    font-size: 18px;
-    margin-bottom: 4px;
-    filter: grayscale(1);
-    transition: filter 0.25s;
-  }
-
-  .role-tab:hover {
-    background: rgba(0, 229, 255, 0.1);
-    color: var(--cyan);
-  }
-
+  .role-tab .role-icon { display: block; font-size: 18px; margin-bottom: 4px; filter: grayscale(1); transition: filter 0.25s; }
+  .role-tab:hover { background: rgba(0, 229, 255, 0.1); color: var(--cyan); }
   .role-tab:hover .role-icon { filter: grayscale(0); }
-
-  .role-tab.active {
-    background: rgba(0, 229, 255, 0.15);
-    border-color: var(--cyan);
-    color: var(--cyan);
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-  }
-
+  .role-tab.active { background: rgba(0, 229, 255, 0.15); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
   .role-tab.active .role-icon { filter: grayscale(0); }
-
-  .login-field {
-    margin-bottom: 14px;
-  }
-
-  .login-field label {
-    display: block;
-    font-size: 9.5px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 5px;
-  }
-
+  .login-field { margin-bottom: 14px; }
+  .login-field label { display: block; font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 5px; }
   .login-field input {
-    width: 100%;
-    background: rgba(0, 229, 255, 0.05);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 12px;
-    font-family: inherit;
-    font-size: 12px;
-    border-radius: 3px;
-    outline: none;
-    transition: all 0.25s;
+    width: 100%; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border);
+    color: var(--text); padding: 10px 12px; font-family: inherit; font-size: 12px;
+    border-radius: 3px; outline: none; transition: all 0.25s;
   }
-
-  .login-field input:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
-    background: rgba(0, 229, 255, 0.08);
-  }
-
-  .login-options {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 10px;
-    margin-bottom: 20px;
-    color: var(--text-dim);
-  }
-
-  .login-options label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-  }
-
-  .login-options input[type="checkbox"] {
-    accent-color: var(--cyan);
-  }
-
-  .login-options a {
-    color: var(--cyan);
-    text-decoration: none;
-    opacity: 0.8;
-  }
-
-  .login-options a:hover { opacity: 1; text-decoration: underline; }
-
-  .btn-login {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(168, 85, 247, 0.15));
-    border: 1px solid var(--cyan);
-    color: var(--cyan);
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-login:hover {
-    background: linear-gradient(135deg, rgba(0, 229, 255, 0.35), rgba(168, 85, 247, 0.3));
-    color: #fff;
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
-  }
-
-  .btn-login::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.7s;
-  }
-
-  .btn-login:hover::after { left: 100%; }
-
-  .login-footer {
-    margin-top: 24px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(0, 229, 255, 0.15);
-    text-align: center;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    color: var(--text-dim);
-    line-height: 1.8;
-  }
-
-  .login-footer .badges {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .login-badge {
-    padding: 3px 8px;
-    border: 1px solid rgba(0, 255, 157, 0.4);
-    color: var(--green);
-    border-radius: 2px;
-    font-size: 8.5px;
-    letter-spacing: 1px;
-  }
-
-  .login-2fa {
-    display: none;
-    margin-bottom: 14px;
-  }
-
+  .login-field input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); background: rgba(0, 229, 255, 0.08); }
+  .login-2fa { display: none; margin-bottom: 14px; }
   .login-2fa.active { display: block; }
-
-  .otp-boxes {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 6px;
-  }
-
+  .otp-boxes { display: flex; gap: 8px; justify-content: center; margin-top: 6px; }
   .otp-box {
-    width: 42px;
-    height: 48px;
-    background: rgba(0, 229, 255, 0.05);
-    border: 1px solid var(--border);
-    color: var(--cyan);
-    font-family: inherit;
-    font-size: 20px;
-    text-align: center;
-    border-radius: 3px;
-    outline: none;
-    transition: all 0.2s;
+    width: 46px; height: 52px; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border);
+    color: var(--cyan); font-family: inherit; font-size: 22px; text-align: center; border-radius: 3px;
+    outline: none; transition: all 0.2s;
   }
-
-  .otp-box:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
-    background: rgba(0, 229, 255, 0.12);
+  .otp-box:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 229, 255, 0.5); background: rgba(0, 229, 255, 0.12); }
+  .btn-login {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(168, 85, 247, 0.15));
+    border: 1px solid var(--cyan); color: var(--cyan); font-family: inherit;
+    font-size: 12px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase;
+    border-radius: 3px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
   }
+  .btn-login:hover { background: linear-gradient(135deg, rgba(0, 229, 255, 0.35), rgba(168, 85, 247, 0.3)); color: #fff; box-shadow: 0 0 30px rgba(0, 229, 255, 0.5); }
+  .login-footer {
+    margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(0, 229, 255, 0.15);
+    text-align: center; font-size: 9px; letter-spacing: 1.5px; color: var(--text-dim); line-height: 1.8;
+  }
+  .login-footer .badges { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+  .login-badge { padding: 3px 8px; border: 1px solid rgba(0, 255, 157, 0.4); color: var(--green); border-radius: 2px; font-size: 8.5px; letter-spacing: 1px; }
 
-  /* ============================================================
-     APP LAYOUT
-     ============================================================ */
+  /* ========== APP ========== */
   .app {
-    position: relative;
-    z-index: 1;
-    height: 100vh;
-    display: grid;
-    grid-template-columns: 260px 340px 1fr 340px;
-    grid-template-rows: 48px 1fr 110px 26px;
-    gap: 6px;
-    padding: 6px;
-    opacity: 0;
-    transition: opacity 0.6s;
+    position: relative; z-index: 1; height: 100vh;
+    display: grid; grid-template-columns: 240px 320px 1fr 340px;
+    grid-template-rows: 48px 1fr 100px 26px; gap: 6px; padding: 6px;
+    opacity: 0; transition: opacity 0.6s;
   }
-
   .app.visible { opacity: 1; }
 
-  /* ============ TOP BAR ============ */
+  /* Topbar */
   .topbar {
-    grid-column: 1 / -1;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.08);
-    position: relative;
-    overflow: hidden;
+    grid-column: 1 / -1; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 4px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px; backdrop-filter: blur(12px);
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.08); position: relative; overflow: hidden;
   }
-
   .topbar::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(90deg, transparent, var(--cyan), var(--red), transparent);
     animation: scanH 5s linear infinite;
   }
-
-  @keyframes scanH {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: bold;
-    letter-spacing: 2.5px;
-    font-size: 14px;
-  }
-
+  @keyframes scanH { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: bold; letter-spacing: 2.5px; font-size: 14px; }
   .brand-logo {
-    width: 24px; height: 24px;
-    border: 2px solid var(--cyan);
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 12px var(--cyan);
-    animation: spin 10s linear infinite;
+    width: 24px; height: 24px; border: 2px solid var(--cyan); border-radius: 50%;
+    position: relative; box-shadow: 0 0 12px var(--cyan); animation: spin 10s linear infinite;
   }
-
   .brand-logo::after {
-    content: '';
-    position: absolute;
-    inset: 5px;
-    border-radius: 50%;
-    background: var(--red);
-    box-shadow: 0 0 10px var(--red);
-    animation: pulse 2s ease-in-out infinite;
+    content: ''; position: absolute; inset: 5px; border-radius: 50%;
+    background: var(--red); box-shadow: 0 0 10px var(--red); animation: pulse 2s ease-in-out infinite;
   }
-
-  .topbar-stats {
-    display: flex;
-    gap: 22px;
-    font-size: 11px;
-  }
-
+  .topbar-stats { display: flex; gap: 22px; font-size: 11px; }
   .stat-item { display: flex; flex-direction: column; gap: 1px; }
   .stat-label { opacity: 0.5; font-size: 9px; letter-spacing: 1px; }
   .stat-value { font-weight: bold; }
-  .stat-value.red { color: var(--red); }
-  .stat-value.yellow { color: var(--yellow); }
-  .stat-value.green { color: var(--green); }
-  .stat-value.cyan { color: var(--cyan); }
-
-  .topbar-user {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    font-size: 11px;
-  }
-
-  .role-badge {
-    padding: 3px 10px;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    font-size: 9.5px;
-    text-transform: uppercase;
-    font-weight: bold;
-  }
-
-  .role-badge.oncologue {
-    background: rgba(168, 85, 247, 0.15);
-    border: 1px solid var(--purple);
-    color: var(--purple);
-  }
-
-  .role-badge.radiologue {
-    background: rgba(0, 229, 255, 0.15);
-    border: 1px solid var(--cyan);
-    color: var(--cyan);
-  }
-
-  .role-badge.interne {
-    background: rgba(255, 217, 59, 0.15);
-    border: 1px solid var(--yellow);
-    color: var(--yellow);
-  }
-
-  .role-badge.admin {
-    background: rgba(255, 59, 107, 0.15);
-    border: 1px solid var(--red);
-    color: var(--red);
-  }
-
-  .session-timer {
-    color: var(--green);
-    font-size: 10.5px;
-    letter-spacing: 1px;
-  }
-
+  .stat-value.red { color: var(--red); } .stat-value.yellow { color: var(--yellow); }
+  .stat-value.green { color: var(--green); } .stat-value.cyan { color: var(--cyan); }
+  .topbar-user { display: flex; align-items: center; gap: 14px; font-size: 11px; }
+  .role-badge { padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; font-size: 9.5px; text-transform: uppercase; font-weight: bold; }
+  .role-badge.oncologue { background: rgba(168, 85, 247, 0.15); border: 1px solid var(--purple); color: var(--purple); }
+  .role-badge.radiologue { background: rgba(0, 229, 255, 0.15); border: 1px solid var(--cyan); color: var(--cyan); }
+  .role-badge.interne { background: rgba(255, 217, 59, 0.15); border: 1px solid var(--yellow); color: var(--yellow); }
+  .role-badge.admin { background: rgba(255, 59, 107, 0.15); border: 1px solid var(--red); color: var(--red); }
+  .session-timer { color: var(--green); font-size: 10.5px; letter-spacing: 1px; }
   .btn-logout {
-    padding: 4px 10px;
-    background: transparent;
-    border: 1px solid rgba(255, 59, 107, 0.4);
-    color: var(--red);
-    font-family: inherit;
-    font-size: 9.5px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all 0.2s;
+    padding: 4px 10px; background: transparent; border: 1px solid rgba(255, 59, 107, 0.4);
+    color: var(--red); font-family: inherit; font-size: 9.5px; letter-spacing: 1px;
+    cursor: pointer; border-radius: 2px; transition: all 0.2s;
   }
+  .btn-logout:hover { background: rgba(255, 59, 107, 0.2); box-shadow: 0 0 12px rgba(255, 59, 107, 0.4); }
 
-  .btn-logout:hover {
-    background: rgba(255, 59, 107, 0.2);
-    box-shadow: 0 0 12px rgba(255, 59, 107, 0.4);
-  }
-
-  /* ============ PANELS ============ */
+  /* Panels */
   .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    backdrop-filter: blur(12px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 4px;
+    backdrop-filter: blur(12px); display: flex; flex-direction: column;
+    overflow: hidden; position: relative;
   }
-
   .panel-header {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(0, 229, 255, 0.04);
-    flex-shrink: 0;
+    padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 10px;
+    letter-spacing: 2px; text-transform: uppercase; display: flex;
+    justify-content: space-between; align-items: center;
+    background: rgba(0, 229, 255, 0.04); flex-shrink: 0;
   }
-
-  .panel-header .title {
-    color: var(--cyan);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .panel-header .title::before {
-    content: '▸';
-    color: var(--red);
-    animation: blink 1.2s infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-
-  .panel-body {
-    padding: 10px 12px;
-    overflow-y: auto;
-    flex: 1;
-  }
-
+  .panel-header .title { color: var(--cyan); display: flex; align-items: center; gap: 6px; }
+  .panel-header .title::before { content: '▸'; color: var(--red); animation: blink 1.2s infinite; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+  .panel-body { padding: 10px 12px; overflow-y: auto; flex: 1; }
   .panel-body::-webkit-scrollbar { width: 3px; }
-  .panel-body::-webkit-scrollbar-thumb {
-    background: var(--cyan-dim);
-    border-radius: 2px;
-  }
+  .panel-body::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
 
-  /* ============ LEFT — PATIENT LIST ============ */
-  .patient-search {
-    padding: 8px 10px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
+  /* Patient list */
+  .patient-search { padding: 8px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
   .patient-search input {
-    width: 100%;
-    background: rgba(0, 229, 255, 0.05);
-    border: 1px solid var(--border);
-    color: var(--cyan);
-    padding: 6px 10px;
-    font-family: inherit;
-    font-size: 11px;
-    border-radius: 3px;
-    outline: none;
+    width: 100%; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border);
+    color: var(--cyan); padding: 6px 10px; font-family: inherit; font-size: 11px;
+    border-radius: 3px; outline: none;
   }
-
-  .patient-search input:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-  }
-
   .patient-list { flex: 1; overflow-y: auto; }
   .patient-list::-webkit-scrollbar { width: 3px; }
   .patient-list::-webkit-scrollbar-thumb { background: var(--cyan-dim); }
-
   .patient-card {
-    padding: 9px 12px;
-    border-bottom: 1px solid rgba(0, 229, 255, 0.08);
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
+    padding: 9px 12px; border-bottom: 1px solid rgba(0, 229, 255, 0.08);
+    cursor: pointer; transition: all 0.2s; position: relative;
   }
-
   .patient-card:hover { background: rgba(0, 229, 255, 0.06); }
-  .patient-card.active {
-    background: rgba(0, 229, 255, 0.12);
-    border-left: 3px solid var(--cyan);
-    padding-left: 9px;
-  }
-
-  .patient-card.active::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: var(--cyan);
-    box-shadow: 0 0 10px var(--cyan);
-  }
-
-  .pc-name {
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--text);
-    margin-bottom: 3px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .pc-id {
-    font-size: 9px;
-    color: var(--cyan-dim);
-    letter-spacing: 0.5px;
-  }
-
-  .pc-meta {
-    display: flex;
-    gap: 8px;
-    font-size: 9px;
-    color: var(--text-dim);
-    margin-top: 3px;
-  }
-
-  .pc-tag {
-    padding: 1px 6px;
-    border-radius: 2px;
-    font-size: 9px;
-    letter-spacing: 0.5px;
-  }
-
+  .patient-card.active { background: rgba(0, 229, 255, 0.12); border-left: 3px solid var(--cyan); padding-left: 9px; }
+  .patient-card.active::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 2px; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+  .pc-name { font-size: 12px; font-weight: bold; margin-bottom: 3px; display: flex; justify-content: space-between; }
+  .pc-id { font-size: 9px; color: var(--cyan-dim); letter-spacing: 0.5px; }
+  .pc-meta { display: flex; gap: 8px; font-size: 9px; color: var(--text-dim); margin-top: 3px; }
+  .pc-tag { padding: 1px 6px; border-radius: 2px; font-size: 9px; letter-spacing: 0.5px; }
   .pc-tag.crit { background: rgba(255,59,107,0.2); color: var(--red); }
   .pc-tag.warn { background: rgba(255,217,59,0.2); color: var(--yellow); }
   .pc-tag.ok { background: rgba(0,255,157,0.15); color: var(--green); }
   .pc-tag.new { background: rgba(168,85,247,0.2); color: var(--purple); }
 
-  /* ============ CENTER-LEFT ============ */
-  .section {
-    border-bottom: 1px solid rgba(0, 229, 255, 0.1);
-    padding: 10px 0;
-  }
-
+  /* Forms */
+  .section { border-bottom: 1px solid rgba(0, 229, 255, 0.1); padding: 10px 0; }
   .section:last-child { border-bottom: none; }
-
-  .section-title {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--cyan);
-    opacity: 0.8;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-  }
-
+  .section-title { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); opacity: 0.8; margin-bottom: 8px; display: flex; justify-content: space-between; }
   .field { margin-bottom: 10px; }
-
-  .field label {
-    display: block;
-    font-size: 9px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    opacity: 0.65;
-    margin-bottom: 4px;
-  }
-
+  .field label { display: block; font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; opacity: 0.65; margin-bottom: 4px; }
   .field input, .field select, .field textarea {
-    width: 100%;
-    background: rgba(0, 229, 255, 0.05);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 6px 9px;
-    font-family: inherit;
-    font-size: 11px;
-    border-radius: 3px;
-    outline: none;
-    transition: all 0.2s;
+    width: 100%; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border);
+    color: var(--text); padding: 6px 9px; font-family: inherit; font-size: 11px;
+    border-radius: 3px; outline: none; transition: all 0.2s;
   }
-
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-    background: rgba(0, 229, 255, 0.08);
-  }
-
-  .field textarea {
-    resize: vertical;
-    min-height: 55px;
-    font-size: 10.5px;
-    line-height: 1.5;
-  }
-
-  .tag-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 4px;
-  }
-
-  .tag {
-    padding: 3px 8px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    font-size: 9.5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: rgba(0, 229, 255, 0.04);
-    letter-spacing: 0.5px;
-  }
-
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+  .field textarea { resize: vertical; min-height: 55px; font-size: 10.5px; line-height: 1.5; }
+  .tag-group { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .tag { padding: 3px 8px; border: 1px solid var(--border); border-radius: 2px; font-size: 9.5px; cursor: pointer; transition: all 0.2s; background: rgba(0, 229, 255, 0.04); letter-spacing: 0.5px; }
   .tag:hover { background: rgba(0, 229, 255, 0.14); }
-  .tag.active {
-    background: rgba(0, 229, 255, 0.18);
-    border-color: var(--cyan);
-    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-    color: #fff;
-  }
-
-  .tag.red.active {
-    background: rgba(255,59,107,0.22);
-    border-color: var(--red);
-    color: var(--red);
-  }
-
-  .tag.yellow.active {
-    background: rgba(255,217,59,0.2);
-    border-color: var(--yellow);
-    color: var(--yellow);
-  }
-
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 3px;
-  }
-
-  .slider-row input[type="range"] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 3px;
-    background: rgba(0, 229, 255, 0.15);
-    border-radius: 2px;
-    padding: 0;
-  }
-
-  .slider-row input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--cyan);
-    box-shadow: 0 0 10px var(--cyan);
-    cursor: pointer;
-  }
-
-  .slider-value {
-    font-size: 10px;
-    color: var(--green);
-    min-width: 42px;
-    text-align: right;
-    font-weight: bold;
-  }
+  .tag.active { background: rgba(0, 229, 255, 0.18); border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); color: #fff; }
+  .tag.red.active { background: rgba(255,59,107,0.22); border-color: var(--red); color: var(--red); }
+  .tag.yellow.active { background: rgba(255,217,59,0.2); border-color: var(--yellow); color: var(--yellow); }
+  .slider-row { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+  .slider-row input[type="range"] { flex: 1; -webkit-appearance: none; height: 3px; background: rgba(0, 229, 255, 0.15); border-radius: 2px; padding: 0; }
+  .slider-row input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); cursor: pointer; }
+  .slider-value { font-size: 10px; color: var(--green); min-width: 42px; text-align: right; font-weight: bold; }
 
   .btn {
-    padding: 8px 12px;
-    background: rgba(0, 229, 255, 0.08);
-    border: 1px solid var(--border);
-    color: var(--cyan);
-    font-family: inherit;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    font-weight: bold;
+    padding: 8px 12px; background: rgba(0, 229, 255, 0.08); border: 1px solid var(--border);
+    color: var(--cyan); font-family: inherit; font-size: 10px; letter-spacing: 1.5px;
+    cursor: pointer; border-radius: 3px; transition: all 0.2s; text-transform: uppercase; font-weight: bold;
   }
-
-  .btn:hover {
-    background: rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.35);
-    color: #fff;
-  }
-
-  .btn.primary {
-    background: linear-gradient(135deg, rgba(255, 59, 107, 0.2), rgba(0, 229, 255, 0.15));
-    border-color: var(--red);
-    color: var(--red);
-    width: 100%;
-  }
-
-  .btn.primary:hover {
-    background: linear-gradient(135deg, rgba(255, 59, 107, 0.35), rgba(0, 229, 255, 0.3));
-    color: #fff;
-  }
-
+  .btn:hover { background: rgba(0, 229, 255, 0.2); box-shadow: 0 0 15px rgba(0, 229, 255, 0.35); color: #fff; }
+  .btn.primary { background: linear-gradient(135deg, rgba(255, 59, 107, 0.2), rgba(0, 229, 255, 0.15)); border-color: var(--red); color: var(--red); width: 100%; }
+  .btn.primary:hover { background: linear-gradient(135deg, rgba(255, 59, 107, 0.35), rgba(0, 229, 255, 0.3)); color: #fff; }
   .btn.danger { border-color: var(--red); color: var(--red); }
   .btn.success { border-color: var(--green); color: var(--green); }
   .btn.purple { border-color: var(--purple); color: var(--purple); }
-
-  .btn-group {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-  }
-
+  .btn-group { display: flex; gap: 6px; margin-top: 8px; }
   .btn-group .btn { flex: 1; }
 
-  /* ============ VIEWPORT ============ */
-  .viewport {
-    position: relative;
-    background: radial-gradient(ellipse at center, #04101e 0%, #010409 100%);
-    overflow: hidden;
-  }
-
+  /* Viewport */
+  .viewport { position: relative; background: radial-gradient(ellipse at center, #04101e 0%, #010409 100%); overflow: hidden; }
   #scene { width: 100%; height: 100%; display: block; }
-
-  .vp-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
+  .vp-overlay { position: absolute; inset: 0; pointer-events: none; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
   .vp-row { display: flex; justify-content: space-between; align-items: flex-start; }
-
   .vp-info-box {
-    background: rgba(0, 0, 0, 0.55);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 8px 10px;
-    backdrop-filter: blur(6px);
-    font-size: 10px;
-    letter-spacing: 0.8px;
-    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.55); border: 1px solid var(--border); border-radius: 3px;
+    padding: 8px 10px; backdrop-filter: blur(6px); font-size: 10px;
+    letter-spacing: 0.8px; line-height: 1.5;
   }
-
   .vp-info-box .k { color: var(--cyan); opacity: 0.75; }
   .vp-info-box .v { color: var(--text); }
-
-  .crosshair {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 60px; height: 60px;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    opacity: 0.35;
-  }
-
-  .crosshair::before, .crosshair::after {
-    content: '';
-    position: absolute;
-    background: var(--cyan);
-    box-shadow: 0 0 6px var(--cyan);
-  }
+  .crosshair { position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; transform: translate(-50%, -50%); pointer-events: none; opacity: 0.35; }
+  .crosshair::before, .crosshair::after { content: ''; position: absolute; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
   .crosshair::before { top: 50%; left: 0; right: 0; height: 1px; }
   .crosshair::after { left: 50%; top: 0; bottom: 0; width: 1px; }
-
   .annotation {
-    position: absolute;
-    pointer-events: auto;
-    cursor: pointer;
-    font-size: 9px;
-    letter-spacing: 0.8px;
-    color: var(--red);
-    text-shadow: 0 0 6px var(--red);
-    padding: 3px 7px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid var(--red);
-    border-radius: 2px;
-    transition: all 0.2s;
+    position: absolute; pointer-events: auto; cursor: pointer; font-size: 9px;
+    letter-spacing: 0.8px; color: var(--red); text-shadow: 0 0 6px var(--red);
+    padding: 3px 7px; background: rgba(0, 0, 0, 0.7); border: 1px solid var(--red);
+    border-radius: 2px; transition: all 0.2s;
   }
-
-  .annotation::before {
-    content: '';
-    position: absolute;
-    width: 6px; height: 6px;
-    background: var(--red);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--red);
-    left: -3px; top: 50%;
-    transform: translateY(-50%);
-  }
-
-  .annotation:hover {
-    background: rgba(255, 59, 107, 0.3);
-    transform: scale(1.05);
-  }
-
-  .annotation.yellow {
-    color: var(--yellow);
-    border-color: var(--yellow);
-    text-shadow: 0 0 6px var(--yellow);
-  }
+  .annotation::before { content: ''; position: absolute; width: 6px; height: 6px; background: var(--red); border-radius: 50%; box-shadow: 0 0 8px var(--red); left: -3px; top: 50%; transform: translateY(-50%); }
+  .annotation:hover { background: rgba(255, 59, 107, 0.3); transform: scale(1.05); }
+  .annotation.yellow { color: var(--yellow); border-color: var(--yellow); }
   .annotation.yellow::before { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
-
-  .annotation.orange {
-    color: var(--orange);
-    border-color: var(--orange);
-    text-shadow: 0 0 6px var(--orange);
-  }
+  .annotation.orange { color: var(--orange); border-color: var(--orange); }
   .annotation.orange::before { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
+  .corner { position: absolute; width: 18px; height: 18px; border: 2px solid var(--cyan); opacity: 0.55; }
+  .corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+  .corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+  .corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
 
-  /* Vidéo simulée des participants RCP */
-  .rcp-participant {
-    position: absolute;
-    width: 110px;
-    height: 80px;
+  /* Video tiles RCP (WebRTC) */
+  .video-grid {
+    position: absolute; top: 60px; right: 12px;
+    display: grid; grid-template-columns: 110px 110px;
+    gap: 6px; pointer-events: auto;
+    opacity: 0; transition: opacity 0.4s;
+    z-index: 15;
+  }
+  .video-grid.active { opacity: 1; }
+  .video-tile {
     background: linear-gradient(135deg, rgba(6, 18, 34, 0.95), rgba(10, 24, 44, 0.95));
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    font-size: 8.5px;
-    letter-spacing: 0.5px;
-    opacity: 0;
-    transition: all 0.4s;
-    backdrop-filter: blur(8px);
-    pointer-events: auto;
+    border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+    font-size: 8px; position: relative;
   }
-
-  .rcp-participant.active { opacity: 1; }
-
-  .rcp-participant .p-video {
-    width: 100%;
-    height: 58px;
-    background: radial-gradient(circle at center, rgba(0, 229, 255, 0.15), rgba(0, 0, 0, 0.6));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    position: relative;
-    overflow: hidden;
+  .video-tile video { width: 100%; height: 65px; object-fit: cover; background: #000; display: block; }
+  .video-tile .tile-label {
+    padding: 2px 5px; background: rgba(0, 0, 0, 0.85); color: var(--cyan);
+    font-size: 8px; letter-spacing: 0.5px; text-overflow: ellipsis;
+    overflow: hidden; white-space: nowrap;
   }
-
-  .rcp-participant .p-video::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 229, 255, 0.05) 3px, rgba(0, 229, 255, 0.05) 4px);
-    animation: videoScan 2s linear infinite;
-  }
-
-  @keyframes videoScan {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 20px; }
-  }
-
-  .rcp-participant .p-label {
-    padding: 3px 6px;
-    background: rgba(0, 0, 0, 0.7);
-    color: var(--cyan);
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  .rcp-participant .p-status {
-    position: absolute;
-    top: 4px; right: 4px;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
+  .video-tile .tile-status {
+    position: absolute; top: 3px; right: 3px; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green);
     animation: pulse 1.5s infinite;
   }
+  .video-tile.speaking { border-color: var(--green); box-shadow: 0 0 15px rgba(0, 255, 157, 0.4); }
+  .video-tile.speaking .tile-status { background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .video-tile.muted { opacity: 0.4; }
 
-  .rcp-participant.speaking {
-    border-color: var(--green);
-    box-shadow: 0 0 15px rgba(0, 255, 157, 0.4);
-  }
-
-  .rcp-participant.speaking .p-status {
-    background: var(--red);
-    box-shadow: 0 0 8px var(--red);
-  }
-
-  /* RCP Control Bar */
+  /* RCP Controls */
   .rcp-bar {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: none;
-    gap: 6px;
-    background: rgba(6, 18, 34, 0.95);
-    border: 1px solid var(--purple);
-    border-radius: 4px;
-    padding: 8px 12px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
-    pointer-events: auto;
-    z-index: 20;
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: none; gap: 6px; background: rgba(6, 18, 34, 0.95);
+    border: 1px solid var(--purple); border-radius: 4px; padding: 8px 12px;
+    backdrop-filter: blur(10px); box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+    pointer-events: auto; z-index: 20;
   }
-
   .rcp-bar.active { display: flex; }
-
   .rcp-btn {
-    padding: 6px 12px;
-    background: rgba(168, 85, 247, 0.1);
-    border: 1px solid var(--purple);
-    color: var(--purple);
-    font-family: inherit;
-    font-size: 10px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all 0.2s;
-    text-transform: uppercase;
+    padding: 6px 12px; background: rgba(168, 85, 247, 0.1); border: 1px solid var(--purple);
+    color: var(--purple); font-family: inherit; font-size: 10px; letter-spacing: 1px;
+    cursor: pointer; border-radius: 2px; transition: all 0.2s; text-transform: uppercase;
   }
+  .rcp-btn:hover { background: rgba(168, 85, 247, 0.25); color: #fff; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+  .rcp-btn.recording { background: rgba(255, 59, 107, 0.3); border-color: var(--red); color: var(--red); animation: pulse 1s infinite; }
 
-  .rcp-btn:hover {
-    background: rgba(168, 85, 247, 0.25);
-    color: #fff;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
-  }
-
-  .rcp-btn.recording {
-    background: rgba(255, 59, 107, 0.3);
-    border-color: var(--red);
-    color: var(--red);
-    animation: pulse 1s infinite;
-  }
-
-  /* ============ RIGHT — DIAGNOSTIC ============ */
-  .tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: rgba(0, 229, 255, 0.02);
-    flex-shrink: 0;
-    overflow-x: auto;
-  }
-
+  /* Right tabs */
+  .tabs { display: flex; border-bottom: 1px solid var(--border); background: rgba(0, 229, 255, 0.02); flex-shrink: 0; overflow-x: auto; }
   .tabs::-webkit-scrollbar { height: 2px; }
   .tabs::-webkit-scrollbar-thumb { background: var(--cyan-dim); }
-
   .tab {
-    flex: 1;
-    min-width: 60px;
-    padding: 8px 4px;
-    text-align: center;
-    font-size: 9px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    background: transparent;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    font-family: inherit;
+    flex: 1; min-width: 55px; padding: 8px 4px; text-align: center;
+    font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent;
+    transition: all 0.2s; background: transparent; border-top: none;
+    border-left: none; border-right: none; font-family: inherit;
   }
-
   .tab:hover { color: var(--cyan); }
-  .tab.active {
-    color: var(--cyan);
-    border-bottom-color: var(--cyan);
-    background: rgba(0, 229, 255, 0.06);
-  }
-
+  .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(0, 229, 255, 0.06); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* Chart containers */
+  /* Charts */
   .chart-wrap {
-    background: rgba(0, 229, 255, 0.03);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 10px;
-    margin-bottom: 10px;
-    height: 180px;
-    position: relative;
+    background: rgba(0, 229, 255, 0.03); border: 1px solid var(--border);
+    border-radius: 3px; padding: 10px; margin-bottom: 10px; position: relative;
   }
-
-  .chart-title {
-    font-size: 9.5px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--cyan);
-    margin-bottom: 6px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .chart-title span:last-child {
-    color: var(--red);
-    font-size: 9px;
-  }
+  .chart-title { font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .chart-title span:last-child { color: var(--red); font-size: 9px; }
 
   /* Score cards */
-  .score-card {
-    background: rgba(0, 229, 255, 0.04);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-
-  .score-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-
-  .score-name {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--cyan);
-    font-weight: bold;
-  }
-
-  .score-value {
-    font-size: 15px;
-    font-weight: bold;
-    font-family: 'Courier New', monospace;
-  }
-
+  .score-card { background: rgba(0, 229, 255, 0.04); border: 1px solid var(--border); border-radius: 3px; padding: 10px; margin-bottom: 10px; }
+  .score-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .score-name { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); font-weight: bold; }
+  .score-value { font-size: 15px; font-weight: bold; font-family: 'Courier New', monospace; }
   .score-value.red { color: var(--red); text-shadow: 0 0 10px var(--red); }
   .score-value.yellow { color: var(--yellow); text-shadow: 0 0 10px var(--yellow); }
   .score-value.green { color: var(--green); text-shadow: 0 0 10px var(--green); }
   .score-value.purple { color: var(--purple); text-shadow: 0 0 10px var(--purple); }
-
-  .score-detail {
-    font-size: 9.5px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    letter-spacing: 0.3px;
-  }
-
+  .score-detail { font-size: 9.5px; color: var(--text-dim); line-height: 1.6; letter-spacing: 0.3px; }
   .score-detail strong { color: var(--text); }
 
   .metric { margin-bottom: 11px; }
-
-  .metric-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 9.5px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    opacity: 0.75;
-    margin-bottom: 4px;
-  }
-
-  .metric-bar {
-    height: 4px;
-    background: rgba(0, 229, 255, 0.08);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .metric-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.6s;
-  }
-
+  .metric-label { display: flex; justify-content: space-between; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.75; margin-bottom: 4px; }
+  .metric-bar { height: 4px; background: rgba(0, 229, 255, 0.08); border-radius: 2px; overflow: hidden; }
+  .metric-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
   .metric-fill.red { background: linear-gradient(90deg, #ff3b6b, #ff8899); box-shadow: 0 0 8px #ff3b6b; }
   .metric-fill.yellow { background: linear-gradient(90deg, #ffd93b, #ffee88); box-shadow: 0 0 8px #ffd93b; }
   .metric-fill.green { background: linear-gradient(90deg, #00ff9d, #88ffcc); box-shadow: 0 0 8px #00ff9d; }
-  .metric-fill.cyan { background: linear-gradient(90deg, #00e5ff, #88f0ff); box-shadow: 0 0 8px #00e5ff; }
-
   .metric-value { font-size: 10px; font-weight: bold; }
   .metric-value.red { color: var(--red); }
   .metric-value.yellow { color: var(--yellow); }
   .metric-value.green { color: var(--green); }
-  .metric-value.cyan { color: var(--cyan); }
 
-  .reco-item {
-    background: rgba(0, 255, 157, 0.04);
-    border-left: 3px solid var(--green);
-    padding: 8px 10px;
-    margin-bottom: 7px;
-    border-radius: 2px;
-    font-size: 10.5px;
-    line-height: 1.5;
-  }
-
-  .reco-item.warn {
-    background: rgba(255, 217, 59, 0.04);
-    border-left-color: var(--yellow);
-  }
-
-  .reco-item.crit {
-    background: rgba(255, 59, 107, 0.04);
-    border-left-color: var(--red);
-  }
-
-  .reco-title {
-    font-size: 9px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    font-weight: bold;
-    margin-bottom: 4px;
-    opacity: 0.85;
-  }
-
+  .reco-item { background: rgba(0, 255, 157, 0.04); border-left: 3px solid var(--green); padding: 8px 10px; margin-bottom: 7px; border-radius: 2px; font-size: 10.5px; line-height: 1.5; }
+  .reco-item.warn { background: rgba(255, 217, 59, 0.04); border-left-color: var(--yellow); }
+  .reco-item.crit { background: rgba(255, 59, 107, 0.04); border-left-color: var(--red); }
+  .reco-title { font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; opacity: 0.85; }
   .reco-item .reco-title { color: var(--green); }
   .reco-item.warn .reco-title { color: var(--yellow); }
   .reco-item.crit .reco-title { color: var(--red); }
-
-  .reco-text { color: var(--text); opacity: 0.9; }
   .reco-text strong { color: var(--cyan); }
-  .reco-text .drug {
-    display: inline-block;
-    background: rgba(0, 229, 255, 0.1);
-    padding: 0 5px;
-    border-radius: 2px;
-    color: var(--cyan);
-    font-weight: bold;
-    margin: 0 2px;
-  }
+  .reco-text .drug { display: inline-block; background: rgba(0, 229, 255, 0.1); padding: 0 5px; border-radius: 2px; color: var(--cyan); font-weight: bold; margin: 0 2px; }
 
-  /* ============ BOTTOM BAR ============ */
+  /* Calendar RCP */
+  .calendar { background: rgba(0, 229, 255, 0.03); border: 1px solid var(--border); border-radius: 3px; padding: 10px; margin-bottom: 10px; }
+  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .cal-month { font-size: 11px; letter-spacing: 1.5px; color: var(--cyan); font-weight: bold; }
+  .cal-nav { display: flex; gap: 4px; }
+  .cal-nav button { background: transparent; border: 1px solid var(--border); color: var(--cyan); width: 20px; height: 20px; cursor: pointer; border-radius: 2px; font-family: inherit; font-size: 11px; }
+  .cal-nav button:hover { background: rgba(0, 229, 255, 0.15); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-day-name { text-align: center; font-size: 8px; color: var(--text-dim); padding: 3px 0; }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    background: rgba(0, 229, 255, 0.03); border: 1px solid transparent;
+    border-radius: 2px; font-size: 10px; cursor: pointer; transition: all 0.15s;
+    position: relative;
+  }
+  .cal-day:hover { background: rgba(0, 229, 255, 0.12); }
+  .cal-day.today { border-color: var(--cyan); color: var(--cyan); font-weight: bold; }
+  .cal-day.event { background: rgba(168, 85, 247, 0.15); border-color: var(--purple); color: var(--purple); }
+  .cal-day.event.crit { background: rgba(255, 59, 107, 0.15); border-color: var(--red); color: var(--red); }
+  .cal-day.event::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+
+  .rcp-event {
+    background: rgba(168, 85, 247, 0.06); border-left: 3px solid var(--purple);
+    padding: 8px 10px; margin-bottom: 6px; border-radius: 2px; font-size: 10px;
+  }
+  .rcp-event.crit { background: rgba(255, 59, 107, 0.06); border-left-color: var(--red); }
+  .rcp-event .ev-title { font-size: 10px; font-weight: bold; color: var(--purple); margin-bottom: 3px; }
+  .rcp-event.crit .ev-title { color: var(--red); }
+  .rcp-event .ev-meta { font-size: 9px; color: var(--text-dim); }
+
+  /* AI Learning */
+  .learn-stat {
+    background: rgba(0, 229, 255, 0.04); border: 1px solid var(--border);
+    border-radius: 3px; padding: 10px; margin-bottom: 8px;
+  }
+  .learn-stat .ls-label { font-size: 9px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+  .learn-stat .ls-value { font-size: 18px; font-weight: bold; color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
+  .learn-stat .ls-detail { font-size: 9px; color: var(--text-dim); margin-top: 4px; }
+
+  .feedback-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
+  .feedback-btn {
+    padding: 8px; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border);
+    color: var(--text); font-family: inherit; font-size: 9.5px; cursor: pointer;
+    border-radius: 3px; transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .feedback-btn:hover { background: rgba(0, 229, 255, 0.15); color: var(--cyan); }
+  .feedback-btn.correct:hover { background: rgba(0, 255, 157, 0.15); border-color: var(--green); color: var(--green); }
+  .feedback-btn.incorrect:hover { background: rgba(255, 59, 107, 0.15); border-color: var(--red); color: var(--red); }
+  .feedback-btn.partial:hover { background: rgba(255, 217, 59, 0.15); border-color: var(--yellow); color: var(--yellow); }
+  .feedback-btn.unknown:hover { background: rgba(168, 85, 247, 0.15); border-color: var(--purple); color: var(--purple); }
+
+  /* Bottom bar */
   .bottombar {
-    grid-column: 1 / -1;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    display: flex;
-    align-items: stretch;
-    padding: 10px 16px;
-    gap: 16px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 0 24px rgba(0, 229, 255, 0.06);
+    grid-column: 1 / -1; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 4px; display: flex; align-items: stretch; padding: 10px 16px;
+    gap: 16px; backdrop-filter: blur(12px); box-shadow: 0 0 24px rgba(0, 229, 255, 0.06);
   }
-
-  .bb-section {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    justify-content: center;
-  }
-
+  .bb-section { display: flex; flex-direction: column; gap: 6px; justify-content: center; }
   .bb-section.grow { flex: 1; }
-
-  .bb-label {
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    opacity: 0.55;
-  }
-
+  .bb-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.55; }
   .stage-selector { display: flex; gap: 4px; }
-
   .stage-btn {
-    padding: 7px 12px;
-    background: rgba(0, 229, 255, 0.05);
-    border: 1px solid var(--border);
-    color: var(--cyan);
-    font-family: inherit;
-    font-size: 10px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.2s;
+    padding: 7px 12px; background: rgba(0, 229, 255, 0.05); border: 1px solid var(--border);
+    color: var(--cyan); font-family: inherit; font-size: 10px; letter-spacing: 1px;
+    cursor: pointer; border-radius: 3px; transition: all 0.2s;
   }
-
   .stage-btn:hover { background: rgba(0, 229, 255, 0.15); }
-  .stage-btn.active {
-    background: var(--red);
-    border-color: var(--red);
-    color: #fff;
-    box-shadow: 0 0 18px rgba(255, 59, 107, 0.6);
-  }
-
-  .timeline {
-    flex: 1;
-    position: relative;
-    padding-top: 20px;
-  }
-
-  .timeline-labels {
-    position: absolute;
-    top: 0;
-    left: 0; right: 0;
-    display: flex;
-    justify-content: space-between;
-    font-size: 8.5px;
-    letter-spacing: 0.8px;
-    opacity: 0.55;
-    text-transform: uppercase;
-  }
-
-  .timeline-track {
-    height: 3px;
-    background: rgba(0, 229, 255, 0.15);
-    border-radius: 2px;
-    position: relative;
-  }
-
-  .timeline-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
-    border-radius: 2px;
-    width: 85%;
-    transition: width 0.5s;
-    box-shadow: 0 0 12px var(--red);
-    position: relative;
-  }
-
-  .timeline-marker {
-    position: absolute;
-    top: -4px;
-    width: 2px; height: 11px;
-    background: var(--cyan);
-    box-shadow: 0 0 8px var(--cyan);
-    left: 85%;
-    transform: translateX(-50%);
-  }
-
+  .stage-btn.active { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 0 18px rgba(255, 59, 107, 0.6); }
+  .timeline { flex: 1; position: relative; padding-top: 20px; }
+  .timeline-labels { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; font-size: 8.5px; letter-spacing: 0.8px; opacity: 0.55; text-transform: uppercase; }
+  .timeline-track { height: 3px; background: rgba(0, 229, 255, 0.15); border-radius: 2px; position: relative; }
+  .timeline-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--yellow), var(--red)); border-radius: 2px; width: 85%; transition: width 0.5s; box-shadow: 0 0 12px var(--red); }
+  .timeline-marker { position: absolute; top: -4px; width: 2px; height: 11px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); left: 85%; transform: translateX(-50%); }
   .action-btns { display: flex; gap: 6px; }
 
-  /* ============ STATUS BAR ============ */
+  /* Statusbar */
   .statusbar {
-    grid-column: 1 / -1;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-    font-size: 9.5px;
-    letter-spacing: 0.8px;
-    color: var(--text-dim);
+    grid-column: 1 / -1; background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 3px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 12px; font-size: 9.5px; letter-spacing: 0.8px; color: var(--text-dim);
   }
-
   .status-left, .status-right { display: flex; gap: 16px; }
+  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 6px currentColor; animation: pulse 1.8s infinite; }
 
-  .status-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    margin-right: 5px;
-    box-shadow: 0 0 6px currentColor;
-    animation: pulse 1.8s infinite;
-  }
-
-  /* ============ MODAL ============ */
+  /* Modal */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(6px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(6px); display: none; align-items: center;
+    justify-content: center; z-index: 1000;
   }
-
   .modal-overlay.active { display: flex; }
-
   .modal {
-    background: var(--panel-2);
-    border: 1px solid var(--cyan);
-    border-radius: 6px;
-    box-shadow: 0 0 60px rgba(0, 229, 255, 0.3);
-    max-width: 640px;
-    width: 90%;
-    max-height: 82vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    background: var(--panel-2); border: 1px solid var(--cyan); border-radius: 6px;
+    box-shadow: 0 0 60px rgba(0, 229, 255, 0.3); max-width: 660px;
+    width: 90%; max-height: 82vh; overflow: hidden;
+    display: flex; flex-direction: column;
   }
-
-  .modal-header {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--cyan);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .modal-close {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--cyan);
-    width: 26px; height: 26px;
-    cursor: pointer;
-    border-radius: 3px;
-    font-family: inherit;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-
+  .modal-header { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--cyan); display: flex; justify-content: space-between; align-items: center; }
+  .modal-close { background: transparent; border: 1px solid var(--border); color: var(--cyan); width: 26px; height: 26px; cursor: pointer; border-radius: 3px; font-family: inherit; font-size: 14px; }
   .modal-close:hover { background: rgba(255, 59, 107, 0.2); border-color: var(--red); color: var(--red); }
-
-  .modal-body {
-    padding: 16px;
-    overflow-y: auto;
-    font-size: 11.5px;
-    line-height: 1.7;
-    color: var(--text);
-  }
-
-  .modal-body h4 {
-    color: var(--cyan);
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin: 14px 0 8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid rgba(0, 229, 255, 0.15);
-  }
-
+  .modal-body { padding: 16px; overflow-y: auto; font-size: 11.5px; line-height: 1.7; color: var(--text); }
+  .modal-body h4 { color: var(--cyan); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin: 14px 0 8px; padding-bottom: 4px; border-bottom: 1px solid rgba(0, 229, 255, 0.15); }
   .modal-body h4:first-child { margin-top: 0; }
   .modal-body p { margin-bottom: 8px; color: var(--text); opacity: 0.9; }
   .modal-body strong { color: var(--red); }
+  .modal-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
 
-  .modal-footer {
-    padding: 12px 16px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
-  /* ============ SCANLINES ============ */
   .scanlines {
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px, transparent 2px,
-      rgba(0, 229, 255, 0.022) 3px,
-      rgba(0, 229, 255, 0.022) 4px
-    );
-    pointer-events: none;
-    z-index: 999;
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0, 229, 255, 0.022) 3px, rgba(0, 229, 255, 0.022) 4px);
+    pointer-events: none; z-index: 999;
   }
-
-  /* ============ TOASTS ============ */
-  .toast-container {
-    position: fixed;
-    bottom: 40px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 1001;
-  }
-
+  .toast-container { position: fixed; bottom: 40px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 1001; }
   .toast {
-    padding: 10px 14px;
-    background: var(--panel-2);
-    border: 1px solid var(--cyan);
-    border-left: 3px solid var(--cyan);
-    border-radius: 3px;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    color: var(--text);
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
-    min-width: 240px;
-    animation: slideInRight 0.3s ease-out;
+    padding: 10px 14px; background: var(--panel-2); border: 1px solid var(--cyan);
+    border-left: 3px solid var(--cyan); border-radius: 3px; font-size: 11px;
+    letter-spacing: 0.5px; color: var(--text); box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
+    min-width: 240px; animation: slideInRight 0.3s ease-out;
   }
-
   .toast.warn { border-color: var(--yellow); border-left-color: var(--yellow); }
   .toast.crit { border-color: var(--red); border-left-color: var(--red); }
   .toast.ok { border-color: var(--green); border-left-color: var(--green); }
   .toast.purple { border-color: var(--purple); border-left-color: var(--purple); }
-
-  @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
+  @keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-     LOGIN SCREEN
-     ============================================================ -->
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-bg-grid"></div>
-
   <div class="login-container">
     <div class="login-logo"></div>
     <div class="login-title">ONCO-HOLO</div>
-    <div class="login-subtitle">Clinical Decision Support · v5.0</div>
-
+    <div class="login-subtitle">Clinical Decision Support · v6.0</div>
     <div class="login-role-tabs">
-      <button class="role-tab active" data-role="oncologue">
-        <span class="role-icon">👨‍⚕️</span>
-        Oncologue
-      </button>
-      <button class="role-tab" data-role="radiologue">
-        <span class="role-icon">🔬</span>
-        Radiologue
-      </button>
-      <button class="role-tab" data-role="interne">
-        <span class="role-icon">📚</span>
-        Interne
-      </button>
-      <button class="role-tab" data-role="admin">
-        <span class="role-icon">⚙️</span>
-        Admin
-      </button>
+      <button class="role-tab active" data-role="oncologue"><span class="role-icon">👨‍⚕️</span>Oncologue</button>
+      <button class="role-tab" data-role="radiologue"><span class="role-icon">🔬</span>Radiologue</button>
+      <button class="role-tab" data-role="interne"><span class="role-icon">📚</span>Interne</button>
+      <button class="role-tab" data-role="admin"><span class="role-icon">⚙️</span>Admin</button>
     </div>
-
     <div class="login-field">
       <label>Identifiant RPPS / Email</label>
-      <input type="text" id="loginUser" value="dr.lefebvre@aphp.fr" autocomplete="username">
+      <input type="text" id="loginUser" value="dr.lefebvre@aphp.fr">
     </div>
-
     <div class="login-field">
       <label>Mot de passe</label>
-      <input type="password" id="loginPass" value="••••••••••••" autocomplete="current-password">
+      <input type="password" id="loginPass" value="••••••••">
     </div>
-
     <div class="login-2fa" id="twoFA">
-      <label style="display:block; font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px; text-align:center;">
-        Code 2FA (6 chiffres)
-      </label>
+      <label style="display:block; font-size:9.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px; text-align:center;">Code 2FA</label>
       <div class="otp-boxes">
-        <input class="otp-box" maxlength="1" data-idx="0">
-        <input class="otp-box" maxlength="1" data-idx="1">
-        <input class="otp-box" maxlength="1" data-idx="2">
-        <input class="otp-box" maxlength="1" data-idx="3">
-        <input class="otp-box" maxlength="1" data-idx="4">
-        <input class="otp-box" maxlength="1" data-idx="5">
+        <input class="otp-box" maxlength="1">
+        <input class="otp-box" maxlength="1">
+        <input class="otp-box" maxlength="1">
+        <input class="otp-box" maxlength="1">
+        <input class="otp-box" maxlength="1">
+        <input class="otp-box" maxlength="1">
       </div>
     </div>
-
-    <div class="login-options">
-      <label><input type="checkbox" id="rememberMe" checked> Session sécurisée 8h</label>
-      <a href="#">Mot de passe oublié ?</a>
-    </div>
-
     <button class="btn-login" id="btnLogin">▶ Se Connecter</button>
-
     <div class="login-footer">
       ACCÈS RÉSERVÉ AU PERSONNEL MÉDICAL AUTORISÉ
       <div class="badges">
@@ -1565,9 +550,7 @@
   </div>
 </div>
 
-<!-- ============================================================
-     MAIN APP
-     ============================================================ -->
+<!-- APP -->
 <div class="app" id="mainApp">
 
   <!-- TOP BAR -->
@@ -1576,26 +559,13 @@
       <div class="brand-logo"></div>
       ONCO-HOLO <span style="opacity:0.4">PRO</span>
     </div>
-
     <div class="topbar-stats">
-      <div class="stat-item">
-        <span class="stat-label">SESSION</span>
-        <span class="stat-value cyan" id="sessionId">SES-8271-A4</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">PATIENT</span>
-        <span class="stat-value yellow" id="activePatientTop">#ANON-047</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">TNM</span>
-        <span class="stat-value red">T4 N3 M1b</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">CONF. IA</span>
-        <span class="stat-value green">94.7%</span>
-      </div>
+      <div class="stat-item"><span class="stat-label">SESSION</span><span class="stat-value cyan" id="sessionId">SES-8271-A4</span></div>
+      <div class="stat-item"><span class="stat-label">PATIENT</span><span class="stat-value yellow" id="activePatientTop">#ANON-047</span></div>
+      <div class="stat-item"><span class="stat-label">TNM</span><span class="stat-value red">T4 N3 M1b</span></div>
+      <div class="stat-item"><span class="stat-label">CONF. IA</span><span class="stat-value green" id="confIA">94.7%</span></div>
+      <div class="stat-item"><span class="stat-label">MODÈLE</span><span class="stat-value cyan" id="modelVer">v4.2.847</span></div>
     </div>
-
     <div class="topbar-user">
       <div class="session-timer" id="sessionTimer">⏱ 00:00:00</div>
       <span style="font-size:10px; opacity:0.6;" id="userNameTop">Dr. M. LEFEBVRE</span>
@@ -1611,9 +581,9 @@
       <span style="opacity:0.5">4</span>
     </div>
     <div class="patient-search">
-      <input type="text" placeholder="🔍 Rechercher (ID, nom, patho)..." id="patientSearch">
+      <input type="text" placeholder="🔍 Rechercher..." id="patientSearch">
     </div>
-    <div class="patient-list" id="patientList">
+    <div class="patient-list">
       <div class="patient-card active" data-id="ANON-047">
         <div class="pc-name">ANON-047 <span class="pc-tag crit">CRITIQUE</span></div>
         <div class="pc-id">NSCLC — ADÉNOCARCINOME</div>
@@ -1640,42 +610,40 @@
   <!-- CENTER-LEFT — PROMPT -->
   <div class="panel">
     <div class="panel-header">
-      <span class="title">Constructeur de Prompt Clinique</span>
-      <span style="opacity:0.5; color:var(--purple)">IA</span>
+      <span class="title">Prompt Clinique IA</span>
+      <span style="opacity:0.5; color:var(--purple)">ML</span>
     </div>
     <div class="panel-body">
       <div class="section">
         <div class="section-title"><span>◈ Contexte clinique</span></div>
         <div class="field">
-          <label>Pathologie principale</label>
+          <label>Pathologie</label>
           <select id="fPathology">
             <option>NSCLC — Adénocarcinome (EGFR-)</option>
             <option>NSCLC — Épidermoïde</option>
             <option>SCLC — Stade étendu</option>
-            <option>Mésothéliome pleural</option>
           </select>
         </div>
         <div class="field">
-          <label>Localisation tumeur primaire</label>
+          <label>Localisation</label>
           <input type="text" id="fLocation" value="Lobe supérieur droit — apex">
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title"><span>◈ Modificateurs anatomiques</span></div>
+        <div class="section-title"><span>◈ Modificateurs</span></div>
         <div class="tag-group">
-          <span class="tag active red">Nécrose centrale</span>
+          <span class="tag active red">Nécrose</span>
           <span class="tag active red">Spiculations</span>
           <span class="tag active yellow">Métastases bilat.</span>
           <span class="tag yellow">Ganglions N3</span>
           <span class="tag">Épanchement</span>
-          <span class="tag">Invasion pleurale</span>
           <span class="tag">Atélectasie</span>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title"><span>◈ Paramètres visualisation</span></div>
+        <div class="section-title"><span>◈ Paramètres visuels</span></div>
         <div class="field">
           <label>Densité tumorale</label>
           <div class="slider-row">
@@ -1704,7 +672,7 @@
         <div class="field">
           <textarea id="generatedPrompt" readonly rows="4"></textarea>
         </div>
-        <button class="btn primary" id="btnGenerate">⟳ Régénérer Modèle IA</button>
+        <button class="btn primary" id="btnGenerate">⟳ Régénérer Modèle</button>
       </div>
     </div>
   </div>
@@ -1712,50 +680,53 @@
   <!-- VIEWPORT -->
   <div class="panel viewport">
     <canvas id="scene"></canvas>
-
-    <div class="corner tl"></div>
-    <div class="corner tr"></div>
-    <div class="corner bl"></div>
-    <div class="corner br"></div>
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
     <div class="crosshair"></div>
 
-    <!-- Toolbar -->
     <div class="vp-toolbar" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:4px;background:rgba(0,0,0,0.65);border:1px solid var(--border);border-radius:4px;padding:4px;backdrop-filter:blur(8px);pointer-events:auto;z-index:10;">
       <button class="vp-tool" data-view="3d" style="padding:5px 9px;background:rgba(0,229,255,0.2);border:none;color:var(--cyan);font-family:inherit;font-size:10px;cursor:pointer;border-radius:2px;">🌐 3D</button>
       <button class="vp-tool" data-view="axial" style="padding:5px 9px;background:transparent;border:none;color:var(--text-dim);font-family:inherit;font-size:10px;cursor:pointer;border-radius:2px;">⬛ Axial</button>
       <button class="vp-tool" data-view="coronal" style="padding:5px 9px;background:transparent;border:none;color:var(--text-dim);font-family:inherit;font-size:10px;cursor:pointer;border-radius:2px;">▭ Coronal</button>
       <button class="vp-tool" data-view="sagittal" style="padding:5px 9px;background:transparent;border:none;color:var(--text-dim);font-family:inherit;font-size:10px;cursor:pointer;border-radius:2px;">▯ Sagittal</button>
-      <button class="vp-tool" id="btnRCP" style="padding:5px 9px;background:rgba(168,85,247,0.2);border:1px solid var(--purple);color:var(--purple);font-family:inherit;font-size:10px;cursor:pointer;border-radius:2px;letter-spacing:1px;">🎥 RCP</button>
+      <button class="vp-tool" id="btnRCP" style="padding:5px 9px;background:rgba(168,85,247,0.2);border:1px solid var(--purple);color:var(--purple);font-family:inherit;font-size:10px;cursor:pointer;border-radius:2px;letter-spacing:1px;">🎥 RCP LIVE</button>
     </div>
 
-    <!-- RCP Control Bar -->
+    <!-- WebRTC Video Grid -->
+    <div class="video-grid" id="videoGrid">
+      <div class="video-tile" data-p="1">
+        <video id="localVideo" autoplay muted playsinline></video>
+        <div class="tile-label" id="localLabel">Moi (Dr. LEFEBVRE)</div>
+        <div class="tile-status"></div>
+      </div>
+      <div class="video-tile" data-p="2" id="tile2">
+        <video id="remoteVideo2" autoplay playsinline></video>
+        <div class="tile-label">Dr. CHEN — Radio</div>
+        <div class="tile-status"></div>
+      </div>
+      <div class="video-tile" data-p="3" id="tile3">
+        <video id="remoteVideo3" autoplay playsinline></video>
+        <div class="tile-label">Dr. MARTIN — Patho</div>
+        <div class="tile-status"></div>
+      </div>
+      <div class="video-tile" data-p="4" id="tile4">
+        <video id="remoteVideo4" autoplay playsinline></video>
+        <div class="tile-label">Dr. DUBOIS — Pneumo</div>
+        <div class="tile-status"></div>
+      </div>
+    </div>
+
+    <!-- RCP Bar -->
     <div class="rcp-bar" id="rcpBar">
       <div style="display:flex;align-items:center;gap:10px;padding-right:10px;border-right:1px solid var(--purple);">
-        <span style="font-size:9px;color:var(--purple);letter-spacing:1.5px;">● REC RCP</span>
+        <span style="font-size:9px;color:var(--purple);letter-spacing:1.5px;">● LIVE</span>
         <span style="font-size:9px;color:var(--green);" id="rcpTimer">00:00</span>
       </div>
       <button class="rcp-btn" id="rcpMic">🎙 Micro</button>
+      <button class="rcp-btn" id="rcpCam">📷 Caméra</button>
       <button class="rcp-btn" id="rcpScreen">📺 Partager</button>
       <button class="rcp-btn" id="rcpRecord">⏺ Enregistrer</button>
       <button class="rcp-btn" id="rcpEnd" style="border-color:var(--red);color:var(--red);">✕ Fin RCP</button>
-    </div>
-
-    <!-- Participants RCP (apparaissent dynamiquement) -->
-    <div class="rcp-participant" data-p="1" style="top:70px;left:16px;">
-      <div class="p-video">👨‍⚕️<div class="p-status"></div></div>
-      <div class="p-label">Dr. LEFEBVRE — Onco</div>
-    </div>
-    <div class="rcp-participant" data-p="2" style="top:70px;right:16px;">
-      <div class="p-video">🔬<div class="p-status"></div></div>
-      <div class="p-label">Dr. CHEN — Radio</div>
-    </div>
-    <div class="rcp-participant" data-p="3" style="bottom:130px;left:16px;">
-      <div class="p-video">🧬<div class="p-status"></div></div>
-      <div class="p-label">Dr. MARTIN — Patho</div>
-    </div>
-    <div class="rcp-participant" data-p="4" style="bottom:130px;right:16px;">
-      <div class="p-video">🫁<div class="p-status"></div></div>
-      <div class="p-label">Dr. DUBOIS — Pneumo</div>
     </div>
 
     <div class="vp-overlay">
@@ -1763,18 +734,17 @@
         <div class="vp-info-box">
           <div><span class="k">PATIENT :</span> <span class="v" id="vpPatient">ANON-047</span></div>
           <div><span class="k">MODALITÉ :</span> <span class="v">TDM — Injection IV</span></div>
-          <div><span class="k">SÉRIE :</span> <span class="v">THX-2024-11-14 · 3mm</span></div>
+          <div><span class="k">SÉRIE :</span> <span class="v">THX-2024-11-14</span></div>
         </div>
-        <div class="vp-info-box" style="text-align:right">
-          <div><span class="k">TEMP IA :</span> <span class="v">0.15</span></div>
-          <div><span class="k">MODÈLE :</span> <span class="v">OncoVision-v4.2</span></div>
-          <div><span class="k">VALIDATION :</span> <span class="v" style="color:var(--green)">CE-MDR IIa</span></div>
+        <div class="vp-info-box" style="text-align:right" id="webrtcStatus">
+          <div><span class="k">WEBRTC :</span> <span class="v" style="color:var(--green)">PRÊT</span></div>
+          <div><span class="k">PEERS :</span> <span class="v" id="peerCount">0</span></div>
+          <div><span class="k">LATENCE :</span> <span class="v" id="rtcLatency">-- ms</span></div>
         </div>
       </div>
-
       <div class="vp-row" style="align-items:flex-end">
         <div class="vp-info-box">
-          <div style="color:var(--red); font-weight:bold; letter-spacing:1.5px; margin-bottom:5px;">⚠ ALERTE DIAGNOSTIQUE</div>
+          <div style="color:var(--red); font-weight:bold; letter-spacing:1.5px; margin-bottom:5px;">⚠ ALERTE</div>
           <div style="font-size:10px; line-height:1.6;">
             Tumeur <strong>8.4 cm</strong> lobe sup. droit<br>
             Nécrose <strong>62%</strong> · Spiculations <strong>+</strong><br>
@@ -1798,192 +768,160 @@
   <!-- RIGHT — DIAGNOSTIC -->
   <div class="panel">
     <div class="tabs">
-      <button class="tab active" data-tab="charts">📈 Charts</button>
+      <button class="tab active" data-tab="charts">📈</button>
+      <button class="tab" data-tab="cal">📅 RCP</button>
+      <button class="tab" data-tab="ai">🧠 IA</button>
       <button class="tab" data-tab="scores">Scores</button>
-      <button class="tab" data-tab="metrics">Métriques</button>
       <button class="tab" data-tab="reco">Thérapie</button>
-      <button class="tab" data-tab="report">CR</button>
     </div>
 
     <div class="panel-body">
 
-      <!-- ONGLET CHARTS -->
+      <!-- CHARTS -->
       <div class="tab-content active" data-content="charts">
-        <div class="chart-wrap" style="height:200px;">
-          <div class="chart-title">
-            <span>◈ Volume tumoral (cm³)</span>
-            <span>+18% / 3 mois</span>
-          </div>
-          <canvas id="chartTumor" style="max-height:165px;"></canvas>
-        </div>
-
         <div class="chart-wrap" style="height:180px;">
-          <div class="chart-title">
-            <span>◈ Marqueurs biologiques</span>
-            <span>LDH ↑ · CA 15-3 ↑</span>
-          </div>
-          <canvas id="chartMarkers" style="max-height:145px;"></canvas>
+          <div class="chart-title"><span>◈ Volume tumoral</span><span>+18%/3m</span></div>
+          <canvas id="chartTumor" style="max-height:145px;"></canvas>
         </div>
-
-        <div class="chart-wrap" style="height:180px;">
-          <div class="chart-title">
-            <span>◈ Fonction pulmonaire</span>
-            <span>VEMS 48%</span>
-          </div>
-          <canvas id="chartLung" style="max-height:145px;"></canvas>
-        </div>
-
         <div class="chart-wrap" style="height:160px;">
-          <div class="chart-title">
-            <span>◈ Distribution métastases</span>
-            <span>14 lésions</span>
-          </div>
-          <canvas id="chartMetastasis" style="max-height:130px;"></canvas>
+          <div class="chart-title"><span>◈ Marqueurs</span><span>LDH ↑ CA ↑</span></div>
+          <canvas id="chartMarkers" style="max-height:130px;"></canvas>
+        </div>
+        <div class="chart-wrap" style="height:160px;">
+          <div class="chart-title"><span>◈ Fonction pulm.</span><span>VEMS 48%</span></div>
+          <canvas id="chartLung" style="max-height:130px;"></canvas>
+        </div>
+        <div class="chart-wrap" style="height:150px;">
+          <div class="chart-title"><span>◈ Distribution</span><span>14 lésions</span></div>
+          <canvas id="chartMeta" style="max-height:120px;"></canvas>
         </div>
       </div>
 
-      <!-- ONGLET SCORES -->
+      <!-- CALENDAR RCP -->
+      <div class="tab-content" data-content="cal">
+        <div class="calendar">
+          <div class="cal-header">
+            <span class="cal-month" id="calMonth">Novembre 2024</span>
+            <div class="cal-nav">
+              <button id="calPrev">‹</button>
+              <button id="calNext">›</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="calGrid">
+            <div class="cal-day-name">L</div><div class="cal-day-name">M</div><div class="cal-day-name">M</div>
+            <div class="cal-day-name">J</div><div class="cal-day-name">V</div><div class="cal-day-name">S</div><div class="cal-day-name">D</div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:12px;"><span>◈ RCP à venir</span></div>
+        <div id="eventsList">
+          <div class="rcp-event crit">
+            <div class="ev-title">⚠ RCP URGENTE — ANON-047</div>
+            <div class="ev-meta">Aujourd'hui 14h30 · Salle B2 · 5 participants</div>
+          </div>
+          <div class="rcp-event">
+            <div class="ev-title">RCP Thoracique hebdo</div>
+            <div class="ev-meta">Jeudi 10h00 · Visio · 12 participants</div>
+          </div>
+          <div class="rcp-event">
+            <div class="ev-title">RCP Moléculaire</div>
+            <div class="ev-meta">Vendredi 15h00 · Salle A1</div>
+          </div>
+        </div>
+
+        <button class="btn primary" style="margin-top:12px;" id="btnNewRCP">➕ Planifier une RCP</button>
+      </div>
+
+      <!-- AI LEARNING -->
+      <div class="tab-content" data-content="ai">
+        <div class="learn-stat">
+          <div class="ls-label">Modèle actuel</div>
+          <div class="ls-value" id="aiVersion">v4.2.847</div>
+          <div class="ls-detail">Dernière MAJ : <span id="aiLastUpdate">il y a 2h</span></div>
+        </div>
+
+        <div class="learn-stat">
+          <div class="ls-label">Précision globale</div>
+          <div class="ls-value" style="color:var(--green)" id="aiAccuracy">94.7%</div>
+          <div class="ls-detail">↑ +0.3% depuis dernier feedback</div>
+        </div>
+
+        <div class="learn-stat">
+          <div class="ls-label">Cas validés</div>
+          <div class="ls-value" id="aiCases">2 847 391</div>
+          <div class="ls-detail">+128 aujourd'hui</div>
+        </div>
+
+        <div class="section-title" style="margin-top:12px;"><span>◈ Votre feedback</span></div>
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:8px; line-height:1.5;">
+          Évaluez la précision de l'analyse IA sur ce cas pour améliorer le modèle.
+        </div>
+
+        <div class="feedback-btns">
+          <button class="feedback-btn correct" data-fb="correct">✓ Exact</button>
+          <button class="feedback-btn partial" data-fb="partial">◐ Partiel</button>
+          <button class="feedback-btn incorrect" data-fb="incorrect">✗ Erreur</button>
+          <button class="feedback-btn unknown" data-fb="unknown">? Incertain</button>
+        </div>
+
+        <div class="section-title" style="margin-top:12px;"><span>◈ Historique feedbacks</span></div>
+        <div id="feedbackLog" style="font-size:10px; line-height:1.7; color:var(--text-dim);">
+          <div>Aucun feedback pour ce cas</div>
+        </div>
+
+        <div class="section-title" style="margin-top:12px;"><span>◈ Apprentissage en cours</span></div>
+        <div class="metric">
+          <div class="metric-label"><span>Progression epoch</span><span class="metric-value green" id="epochPct">64%</span></div>
+          <div class="metric-bar"><div class="metric-fill green" id="epochBar" style="width:64%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label"><span>Buffer de cas</span><span class="metric-value green">847 / 1000</span></div>
+          <div class="metric-bar"><div class="metric-fill green" style="width:84.7%"></div></div>
+        </div>
+
+        <button class="btn success" style="width:100%;margin-top:12px;" id="btnTrainNow">⚡ Déclencher ré-entraînement</button>
+      </div>
+
+      <!-- SCORES -->
       <div class="tab-content" data-content="scores">
         <div class="score-card">
-          <div class="score-header">
-            <span class="score-name">TNM (8ème éd.)</span>
-            <span class="score-value red">IVB</span>
-          </div>
-          <div class="score-detail">
-            <strong>T4</strong> : tumeur &gt; 7 cm, invasion médiastin<br>
-            <strong>N3</strong> : ganglions controlatéraux<br>
-            <strong>M1b</strong> : métastase extrathoracique
-          </div>
+          <div class="score-header"><span class="score-name">TNM</span><span class="score-value red">IVB</span></div>
+          <div class="score-detail"><strong>T4</strong> tumeur &gt; 7cm<br><strong>N3</strong> ganglions controlat.<br><strong>M1b</strong> métastase extra-thor.</div>
         </div>
         <div class="score-card">
-          <div class="score-header">
-            <span class="score-name">ECOG / PS</span>
-            <span class="score-value yellow">2</span>
-          </div>
-          <div class="score-detail">
-            Patient ambulatoire, activités légères.<br>
-            <strong>Impact :</strong> éligible chimiothérapie + immuno.
-          </div>
+          <div class="score-header"><span class="score-name">ECOG</span><span class="score-value yellow">2</span></div>
+          <div class="score-detail">Ambulatoire, activités légères.<br>Éligible chimio + immuno.</div>
         </div>
         <div class="score-card">
-          <div class="score-header">
-            <span class="score-name">RECIST 1.1</span>
-            <span class="score-value purple">CIBLE</span>
-          </div>
-          <div class="score-detail">
-            Lésions cibles : <strong>4</strong> mesurables<br>
-            Somme diamètres : <strong>142 mm</strong>
-          </div>
+          <div class="score-header"><span class="score-name">RECIST 1.1</span><span class="score-value purple">CIBLE</span></div>
+          <div class="score-detail"><strong>4</strong> lésions mesurables<br>Somme : <strong>142 mm</strong></div>
         </div>
         <div class="score-card">
-          <div class="score-header">
-            <span class="score-name">Volume tumoral</span>
-            <span class="score-value red">284 cm³</span>
-          </div>
-          <div class="score-detail">
-            Segmentation IA automatique<br>
-            Précision : <strong>±3.2 cm³</strong><br>
-            Croissance : <strong>+18%/3 mois</strong>
-          </div>
-        </div>
-        <div class="score-card">
-          <div class="score-header">
-            <span class="score-name">Mutations</span>
-            <span class="score-value green">KRAS+</span>
-          </div>
-          <div class="score-detail">
-            <strong>KRAS G12C :</strong> 32% (cible thérap.)<br>
-            <strong>EGFR :</strong> 4%<br>
-            <strong>PD-L1 TPS :</strong> 45% → immuno favorable
-          </div>
+          <div class="score-header"><span class="score-name">Mutations</span><span class="score-value green">KRAS+</span></div>
+          <div class="score-detail">KRAS G12C : <strong>32%</strong><br>EGFR : 4%<br>PD-L1 TPS : 45%</div>
         </div>
       </div>
 
-      <!-- ONGLET MÉTRIQUES -->
-      <div class="tab-content" data-content="metrics">
-        <div class="metric">
-          <div class="metric-label"><span>Taille tumeur</span><span class="metric-value red">8.4 cm</span></div>
-          <div class="metric-bar"><div class="metric-fill red" style="width:84%"></div></div>
-        </div>
-        <div class="metric">
-          <div class="metric-label"><span>Nécrose</span><span class="metric-value yellow">62%</span></div>
-          <div class="metric-bar"><div class="metric-fill yellow" style="width:62%"></div></div>
-        </div>
-        <div class="metric">
-          <div class="metric-label"><span>VEMS</span><span class="metric-value red">1.42 L (48%)</span></div>
-          <div class="metric-bar"><div class="metric-fill red" style="width:48%"></div></div>
-        </div>
-        <div class="metric">
-          <div class="metric-label"><span>SpO₂</span><span class="metric-value yellow">91%</span></div>
-          <div class="metric-bar"><div class="metric-fill yellow" style="width:91%"></div></div>
-        </div>
-        <div class="metric">
-          <div class="metric-label"><span>Épanchement</span><span class="metric-value red">450 mL</span></div>
-          <div class="metric-bar"><div class="metric-fill red" style="width:60%"></div></div>
-        </div>
-        <div class="metric">
-          <div class="metric-label"><span>Ganglions N3</span><span class="metric-value yellow">7 / 12</span></div>
-          <div class="metric-bar"><div class="metric-fill yellow" style="width:58%"></div></div>
-        </div>
-        <div class="metric">
-          <div class="metric-label"><span>CA 15-3</span><span class="metric-value red">48 U/mL</span></div>
-          <div class="metric-bar"><div class="metric-fill red" style="width:72%"></div></div>
-        </div>
-      </div>
-
-      <!-- ONGLET RECO -->
+      <!-- RECO -->
       <div class="tab-content" data-content="reco">
         <div class="reco-item crit">
-          <div class="reco-title">⚠ Traitement systémique 1L</div>
+          <div class="reco-title">⚠ Traitement 1L</div>
           <div class="reco-text">
-            <span class="drug">Pembrolizumab</span> + <span class="drug">Carboplatine</span> + <span class="drug">Pémétrexed</span><br>
-            <em>KEYNOTE-189 — OS 22.0 mois</em>
+            <span class="drug">Pembrolizumab</span>+<span class="drug">Carboplatine</span>+<span class="drug">Pémétrexed</span><br>
+            <em>KEYNOTE-189 — OS 22.0m</em>
           </div>
         </div>
         <div class="reco-item warn">
-          <div class="reco-title">◈ À discuter en RCP</div>
-          <div class="reco-text">
-            <strong>NGS panel 50 gènes</strong><br>
-            KRAS G12C → <span class="drug">Sotorasib</span>
-          </div>
+          <div class="reco-title">◈ À discuter RCP</div>
+          <div class="reco-text">NGS panel 50 gènes<br>KRAS G12C → <span class="drug">Sotorasib</span></div>
         </div>
         <div class="reco-item warn">
           <div class="reco-title">◈ Radiothérapie palliative</div>
-          <div class="reco-text">
-            Si douleur osseuse ou compression<br>
-            <em>8 Gy × 1 ou 20 Gy / 5 fr</em>
-          </div>
+          <div class="reco-text">Si douleur osseuse<br><em>8 Gy ×1 ou 20 Gy/5fr</em></div>
         </div>
         <div class="reco-item crit">
           <div class="reco-title">⚠ Contre-indications</div>
-          <div class="reco-text">
-            Bévacizumab : <strong>CI</strong><br>
-            Chirurgie : <strong>non éligible</strong>
-          </div>
-        </div>
-      </div>
-
-      <!-- ONGLET CR -->
-      <div class="tab-content" data-content="report">
-        <div class="field">
-          <label>Type de CR</label>
-          <select id="reportType">
-            <option>CR Consultation oncologique</option>
-            <option>CR RCP</option>
-            <option>CR Imagerie (TDM)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Aperçu</label>
-          <textarea readonly rows="14" style="font-size:9.5px; line-height:1.6;" id="reportPreview"></textarea>
-        </div>
-        <div class="btn-group">
-          <button class="btn success" id="btnGenCR">⚡ Générer</button>
-          <button class="btn" id="btnExportPDF">⬇ PDF</button>
-        </div>
-        <div class="btn-group">
-          <button class="btn" id="btnExportHL7">🔗 HL7</button>
-          <button class="btn danger" id="btnValidateCR">✓ Signer</button>
+          <div class="reco-text">Bévacizumab : <strong>CI</strong><br>Chirurgie : <strong>non éligible</strong></div>
         </div>
       </div>
 
@@ -1993,7 +931,7 @@
   <!-- BOTTOM BAR -->
   <div class="bottombar">
     <div class="bb-section">
-      <span class="bb-label">Stade simulé</span>
+      <span class="bb-label">Stade</span>
       <div class="stage-selector">
         <button class="stage-btn" data-stage="1">I</button>
         <button class="stage-btn" data-stage="2">II</button>
@@ -2001,12 +939,11 @@
         <button class="stage-btn active" data-stage="4">IV</button>
       </div>
     </div>
-
     <div class="bb-section grow">
-      <span class="bb-label">Progression pathologique</span>
+      <span class="bb-label">Progression</span>
       <div class="timeline">
         <div class="timeline-labels">
-          <span>Diagnostic</span><span>Croissance</span><span>Envahiss.</span><span>Métastases</span>
+          <span>Diag.</span><span>Croissance</span><span>Envahiss.</span><span>Métastases</span>
         </div>
         <div class="timeline-track">
           <div class="timeline-fill" id="timelineFill"></div>
@@ -2014,27 +951,25 @@
         </div>
       </div>
     </div>
-
     <div class="bb-section">
       <span class="bb-label">Actions</span>
       <div class="action-btns">
         <button class="btn" id="btnPause">⏸</button>
         <button class="btn" id="btnReset">↺</button>
         <button class="btn" id="btnSnapshot">📸</button>
-        <button class="btn purple" id="btnRCP2">🎥 RCP</button>
+        <button class="btn purple" id="btnRCP2">🎥</button>
       </div>
     </div>
   </div>
 
-  <!-- STATUS BAR -->
   <div class="statusbar">
     <div class="status-left">
-      <span><span class="status-dot" style="color:var(--green); background:var(--green)"></span>ONLINE</span>
+      <span><span class="status-dot" style="color:var(--green);background:var(--green)"></span>ONLINE</span>
       <span>PACS : <span style="color:var(--green)">OK</span></span>
       <span>DICOM : <span style="color:var(--green)">OK</span></span>
       <span>HL7 : <span style="color:var(--green)">OK</span></span>
-      <span>RGPD : <span style="color:var(--green)">CONFORME</span></span>
-      <span>MDR IIa : <span style="color:var(--green)">CERTIFIÉ</span></span>
+      <span>WebRTC : <span style="color:var(--green)" id="rtcStatus">STANDBY</span></span>
+      <span>IA : <span style="color:var(--green)" id="aiStatus">ONLINE</span></span>
     </div>
     <div class="status-right">
       <span id="statusLatency">LATENCE : 42 ms</span>
@@ -2045,11 +980,10 @@
 
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
-      <span id="modalTitle">◈ Information</span>
+      <span id="modalTitle">◈ Info</span>
       <button class="modal-close" id="modalClose">×</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
@@ -2060,23 +994,20 @@
   </div>
 </div>
 
-<!-- TOASTS -->
 <div class="toast-container" id="toastContainer"></div>
-
 <div class="scanlines"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* ============================================================
-   LOGIN LOGIC
+   LOGIN
    ============================================================ */
 let currentUser = { role: 'oncologue', name: 'Dr. M. LEFEBVRE', rpps: '10003456789' };
-
 const roleConfig = {
-  oncologue: { name: 'Dr. M. LEFEBVRE', icon: '👨‍⚕️', color: 'purple' },
-  radiologue: { name: 'Dr. S. CHEN', icon: '🔬', color: 'cyan' },
-  interne: { name: 'Dr. A. PETIT', icon: '📚', color: 'yellow' },
-  admin: { name: 'Admin Système', icon: '⚙️', color: 'red' }
+  oncologue: { name: 'Dr. M. LEFEBVRE', icon: '👨‍⚕️' },
+  radiologue: { name: 'Dr. S. CHEN', icon: '🔬' },
+  interne: { name: 'Dr. A. PETIT', icon: '📚' },
+  admin: { name: 'Admin Système', icon: '⚙️' }
 };
 
 document.querySelectorAll('.role-tab').forEach(tab => {
@@ -2084,57 +1015,45 @@ document.querySelectorAll('.role-tab').forEach(tab => {
     document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     const role = tab.dataset.role;
-    document.getElementById('loginUser').value = 
-      role === 'admin' ? 'admin@aphp.fr' : `dr.${role}@aphp.fr`;
+    document.getElementById('loginUser').value = role === 'admin' ? 'admin@aphp.fr' : `dr.${role}@aphp.fr`;
   });
 });
 
-// OTP auto-focus
 document.querySelectorAll('.otp-box').forEach((box, i, all) => {
-  box.addEventListener('input', () => {
-    if (box.value.length === 1 && i < all.length - 1) all[i + 1].focus();
-  });
-  box.addEventListener('keydown', e => {
-    if (e.key === 'Backspace' && box.value.length === 0 && i > 0) all[i - 1].focus();
-  });
+  box.addEventListener('input', () => { if (box.value.length === 1 && i < all.length - 1) all[i + 1].focus(); });
+  box.addEventListener('keydown', e => { if (e.key === 'Backspace' && box.value.length === 0 && i > 0) all[i - 1].focus(); });
 });
 
 document.getElementById('btnLogin').addEventListener('click', () => {
   const btn = document.getElementById('btnLogin');
   const selectedRole = document.querySelector('.role-tab.active').dataset.role;
   const twoFA = document.getElementById('twoFA');
-
-  // Étape 1 : Afficher 2FA si pas encore fait
   if (!twoFA.classList.contains('active')) {
     twoFA.classList.add('active');
-    btn.textContent = '🔐 Vérifier Code 2FA';
+    btn.textContent = '🔐 Vérifier 2FA';
     document.querySelector('.otp-box').focus();
     return;
   }
-
-  // Étape 2 : Login final
   btn.textContent = '⏳ Authentification...';
   btn.disabled = true;
-
   setTimeout(() => {
     const cfg = roleConfig[selectedRole];
     currentUser.role = selectedRole;
     currentUser.name = cfg.name;
-
     document.getElementById('loginScreen').classList.add('hidden');
     setTimeout(() => {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').classList.add('visible');
       document.getElementById('userNameTop').textContent = cfg.name;
-
+      document.getElementById('localLabel').textContent = `Moi (${cfg.name})`;
       const badge = document.getElementById('roleBadge');
       badge.textContent = selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1);
       badge.className = 'role-badge ' + selectedRole;
-
       addToast(`✓ Connecté — ${cfg.name}`, 'ok');
       addToast(`👤 Rôle : ${selectedRole}`, 'purple');
-      addLog(`Session ouverte par ${cfg.name}`, 'ok');
       initCharts();
+      initCalendar();
+      initAI();
     }, 600);
   }, 1200);
 });
@@ -2142,12 +1061,11 @@ document.getElementById('btnLogin').addEventListener('click', () => {
 document.getElementById('btnLogout').addEventListener('click', () => {
   openModal('◈ Déconnexion', `
     <h4>▸ Session en cours</h4>
-    <p>Une déconnexion fermera votre session sécurisée et déconnectera tous les services (PACS, DICOM, HL7).</p>
-    <h4>▸ Actions non sauvegardées</h4>
-    <p>Aucune donnée clinique en cours de modification.</p>
-    <h4>▸ Traçabilité</h4>
-    <p>Cet évènement sera journalisé conformément au RGPD.</p>
+    <p>Fermer votre session sécurisée et déconnecter tous les services ?</p>
+    <h4>▸ RCP active</h4>
+    <p>${rcpActive ? '<strong>⚠ Une RCP est en cours — elle sera terminée</strong>' : 'Aucune RCP active'}</p>
   `, () => {
+    if (rcpActive) toggleRCP();
     document.getElementById('mainApp').classList.remove('visible');
     setTimeout(() => {
       document.getElementById('loginScreen').style.display = 'flex';
@@ -2162,7 +1080,7 @@ document.getElementById('btnLogout').addEventListener('click', () => {
 });
 
 /* ============================================================
-   THREE.JS SCENE
+   THREE.JS
    ============================================================ */
 const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -2170,7 +1088,6 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x000308, 0.045);
-
 const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
 camera.position.set(0, 0.3, 9.5);
 
@@ -2218,13 +1135,8 @@ function createLung(side) {
   for (let i = 0; i < pos.count; i++) {
     let x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
     y *= 1.6;
-    if (side === 1) {
-      x = x * 1.0 + 0.2;
-      if (x < -0.1) x *= 0.6;
-    } else {
-      x = x * 0.9 - 0.3;
-      if (x > 0.2) x *= 0.5;
-    }
+    if (side === 1) { x = x * 1.0 + 0.2; if (x < -0.1) x *= 0.6; }
+    else { x = x * 0.9 - 0.3; if (x > 0.2) x *= 0.5; }
     if (y < -1) { const t = (y + 1) / -1.4; x *= (1 - t * 0.6); z *= (1 - t * 0.6); }
     if (side === -1 && x > 0.4 && y < 0.5 && y > -1) x -= 0.35;
     pos.setXYZ(i, x, y, z);
@@ -2300,10 +1212,8 @@ function createMetastasis(size, pos, color = 0xffd93b) {
 
 [[-1.6, 0.8, 0.3], [-1.1, -0.3, 0.5], [-1.8, -0.9, -0.2], [-1.3, 0.2, -0.4], [-2.0, 0.5, 0.1]]
   .forEach(p => createMetastasis(0.1 + Math.random() * 0.06, new THREE.Vector3(...p)));
-
 [[0.8, 0.5, 0.4], [1.0, -0.6, 0.3], [1.6, -1.1, -0.3], [2.1, 0.9, -0.2], [0.9, 1.8, 0.5]]
   .forEach(p => createMetastasis(0.09 + Math.random() * 0.07, new THREE.Vector3(...p)));
-
 [[0, -2.4, 0.3, 0.14], [0.3, 2.6, 0, 0.1], [-0.6, 2.8, 0, 0.08], [2.4, -2.0, 0.2, 0.1]]
   .forEach(p => createMetastasis(p[3], new THREE.Vector3(p[0], p[1], p[2]), 0xff6b3b));
 
@@ -2349,23 +1259,18 @@ function animate() {
   requestAnimationFrame(animate);
   const delta = Math.min(clock.getDelta(), 0.1);
   if (!isPaused) time += delta;
-
   if (autoRotate) hologram.rotation.y = Math.sin(time * 0.3) * 0.6 + time * 0.15;
   hologram.position.y = Math.sin(time * 0.8) * 0.1;
-
   primaryTumor.scale.setScalar(1 + Math.sin(time * 2.5) * 0.06);
   tumorLight.intensity = 2.5 + Math.sin(time * 2.5) * 1.2;
-
   metastases.forEach(m => {
     m.scale.setScalar(1 + Math.sin(time * 3 + m.userData.phase) * 0.15);
     m.position.y = m.userData.baseY + Math.sin(time * 1.5 + m.userData.phase) * 0.04;
   });
-
   scanRings.forEach((ring, i) => {
     ring.rotation.z += delta * (0.5 + i * 0.3);
     ring.material.opacity = 0.25 + Math.sin(time * 2 + i) * 0.15;
   });
-
   const pos = particleGeo.attributes.position.array;
   for (let i = 0; i < particleCount; i++) {
     pos[i * 3 + 1] += particleVel[i].y;
@@ -2376,12 +1281,9 @@ function animate() {
     }
   }
   particleGeo.attributes.position.needsUpdate = true;
-
   lungLeft.rotation.z = Math.sin(time * 0.5) * 0.02;
   lungRight.rotation.z = -Math.sin(time * 0.5) * 0.02;
-
   renderer.render(scene, camera);
-
   frameCount++;
   const now = performance.now();
   if (now - lastFpsTime > 1000) {
@@ -2396,138 +1298,523 @@ window.addEventListener('resize', resizeRenderer);
 setTimeout(() => { resizeRenderer(); animate(); }, 200);
 
 /* ============================================================
-   CHARTS (Chart.js)
+   CHARTS
    ============================================================ */
 let charts = {};
 function initCharts() {
   if (charts.tumor) return;
-
   Chart.defaults.color = '#6a8fa3';
   Chart.defaults.font.family = 'SF Mono, Courier New, monospace';
   Chart.defaults.font.size = 9;
   Chart.defaults.borderColor = 'rgba(0, 229, 255, 0.1)';
+  const grid = { color: 'rgba(0, 229, 255, 0.08)', drawBorder: false };
+  const ticks = { color: '#6a8fa3', font: { size: 8.5 } };
 
-  const gridConfig = { color: 'rgba(0, 229, 255, 0.08)', drawBorder: false };
-  const ticksConfig = { color: '#6a8fa3', font: { size: 8.5 } };
-
-  // 1. Volume tumoral
   charts.tumor = new Chart(document.getElementById('chartTumor'), {
     type: 'line',
     data: {
       labels: ['T-12m', 'T-9m', 'T-6m', 'T-3m', 'T-1m', 'Auj.'],
       datasets: [{
-        label: 'Volume (cm³)',
         data: [52, 88, 142, 195, 240, 284],
         borderColor: '#ff3b6b',
         backgroundColor: (ctx) => {
-          const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 200);
+          const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 180);
           g.addColorStop(0, 'rgba(255, 59, 107, 0.4)');
           g.addColorStop(1, 'rgba(255, 59, 107, 0)');
           return g;
         },
-        borderWidth: 2,
-        pointBackgroundColor: '#ff3b6b',
-        pointBorderColor: '#fff',
-        pointRadius: 3,
-        pointHoverRadius: 5,
-        tension: 0.35,
-        fill: true
+        borderWidth: 2, tension: 0.35, fill: true,
+        pointBackgroundColor: '#ff3b6b', pointRadius: 3
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: gridConfig, ticks: ticksConfig },
-        y: { grid: gridConfig, ticks: ticksConfig, beginAtZero: true }
-      }
-    }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: { x: { grid, ticks }, y: { grid, ticks, beginAtZero: true } } }
   });
 
-  // 2. Marqueurs biologiques
   charts.markers = new Chart(document.getElementById('chartMarkers'), {
     type: 'line',
     data: {
       labels: ['T-12m', 'T-9m', 'T-6m', 'T-3m', 'T-1m', 'Auj.'],
       datasets: [
-        {
-          label: 'LDH',
-          data: [180, 195, 220, 245, 285, 312],
-          borderColor: '#ffd93b', borderWidth: 2, tension: 0.35, pointRadius: 2
-        },
-        {
-          label: 'CA 15-3',
-          data: [12, 15, 20, 28, 38, 48],
-          borderColor: '#a855f7', borderWidth: 2, tension: 0.35, pointRadius: 2
-        }
+        { label: 'LDH', data: [180, 195, 220, 245, 285, 312], borderColor: '#ffd93b', borderWidth: 2, tension: 0.35, pointRadius: 2 },
+        { label: 'CA 15-3', data: [12, 15, 20, 28, 38, 48], borderColor: '#a855f7', borderWidth: 2, tension: 0.35, pointRadius: 2 }
       ]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true, position: 'top', align: 'end',
-          labels: { boxWidth: 8, boxHeight: 8, padding: 6, font: { size: 8.5 } }
-        }
-      },
-      scales: {
-        x: { grid: gridConfig, ticks: ticksConfig },
-        y: { grid: gridConfig, ticks: ticksConfig, beginAtZero: true }
-      }
-    }
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 8, boxHeight: 8, padding: 4, font: { size: 8 } } } },
+      scales: { x: { grid, ticks }, y: { grid, ticks, beginAtZero: true } } }
   });
 
-  // 3. Fonction pulmonaire
   charts.lung = new Chart(document.getElementById('chartLung'), {
     type: 'bar',
     data: {
       labels: ['T-12m', 'T-6m', 'T-3m', 'Auj.', 'Prévu'],
       datasets: [{
-        label: 'VEMS (% théorique)',
         data: [88, 72, 58, 48, 42],
         backgroundColor: ['#00ff9d', '#ffd93b', '#ff8b3b', '#ff3b6b', '#a855f7'],
-        borderRadius: 3,
-        borderWidth: 0
+        borderRadius: 3, borderWidth: 0
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: gridConfig, ticks: ticksConfig },
-        y: { grid: gridConfig, ticks: ticksConfig, beginAtZero: true, max: 100 }
-      }
-    }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: { x: { grid, ticks }, y: { grid, ticks, beginAtZero: true, max: 100 } } }
   });
 
-  // 4. Distribution métastases
-  charts.metastasis = new Chart(document.getElementById('chartMetastasis'), {
+  charts.meta = new Chart(document.getElementById('chartMeta'), {
     type: 'doughnut',
     data: {
       labels: ['Poumon G', 'Poumon D', 'Ganglions', 'Foie', 'Os'],
       datasets: [{
         data: [5, 5, 2, 1, 1],
         backgroundColor: ['#ffd93b', '#ff8b3b', '#ff5577', '#a855f7', '#ff3b6b'],
-        borderColor: 'rgba(0, 0, 0, 0.5)',
-        borderWidth: 2
+        borderColor: 'rgba(0,0,0,0.5)', borderWidth: 2
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '55%',
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: { boxWidth: 8, boxHeight: 8, padding: 6, font: { size: 8 } }
-        }
-      }
-    }
+    options: { responsive: true, maintainAspectRatio: false, cutout: '55%',
+      plugins: { legend: { position: 'right', labels: { boxWidth: 8, boxHeight: 8, padding: 4, font: { size: 8 } } } } }
   });
 }
+
+/* ============================================================
+   CALENDRIER RCP
+   ============================================================ */
+let currentMonth = new Date(2024, 10, 1);
+const rcpEvents = {
+  '2024-11-14': { title: 'RCP URGENTE — ANON-047', type: 'crit' },
+  '2024-11-21': { title: 'RCP Thoracique hebdo', type: 'normal' },
+  '2024-11-22': { title: 'RCP Moléculaire', type: 'normal' },
+  '2024-11-28': { title: 'RCP Thoracique hebdo', type: 'normal' }
+};
+const monthNames = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+function initCalendar() { renderCalendar(); }
+
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = `
+    <div class="cal-day-name">L</div><div class="cal-day-name">M</div><div class="cal-day-name">M</div>
+    <div class="cal-day-name">J</div><div class="cal-day-name">V</div><div class="cal-day-name">S</div><div class="cal-day-name">D</div>
+  `;
+
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startOffset = (firstDay.getDay() + 6) % 7;
+  const today = new Date();
+
+  for (let i = 0; i < startOffset; i++) {
+    grid.innerHTML += `<div></div>`;
+  }
+
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const isToday = year === today.getFullYear() && month === today.getMonth() && d === today.getDate();
+    const event = rcpEvents[dateStr];
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (event) cls += ' event ' + (event.type === 'crit' ? 'crit' : '');
+    grid.innerHTML += `<div class="${cls}" data-date="${dateStr}" title="${event ? event.title : ''}">${d}</div>`;
+  }
+
+  document.getElementById('calMonth').textContent = `${monthNames[month]} ${year}`;
+
+  grid.querySelectorAll('.cal-day.event').forEach(el => {
+    el.addEventListener('click', () => {
+      const date = el.dataset.date;
+      const ev = rcpEvents[date];
+      if (ev) {
+        addToast(`📅 ${ev.title}`, ev.type === 'crit' ? 'crit' : 'purple');
+        openModal('◈ Détails RCP', `
+          <h4>▸ ${ev.title}</h4>
+          <p><strong>Date :</strong> ${date}</p>
+          <p><strong>Type :</strong> ${ev.type === 'crit' ? 'URGENTE' : 'Programmée'}</p>
+          <p><strong>Participants :</strong> 5 médecins</p>
+          <h4>▸ Actions</h4>
+          <p>• Rejoindre la visio (WebRTC)<br>• Consulter ordre du jour<br>• Ajouter documents</p>
+        `, () => { toggleRCP(); });
+      }
+    });
+  });
+}
+
+document.getElementById('calPrev').addEventListener('click', () => {
+  currentMonth.setMonth(currentMonth.getMonth() - 1);
+  renderCalendar();
+});
+
+document.getElementById('calNext').addEventListener('click', () => {
+  currentMonth.setMonth(currentMonth.getMonth() + 1);
+  renderCalendar();
+});
+
+document.getElementById('btnNewRCP').addEventListener('click', () => {
+  openModal('◈ Planifier une RCP', `
+    <h4>▸ Nouvelle réunion</h4>
+    <p><strong>Patient :</strong> ANON-047 (T4 N3 M1b)</p>
+    <p><strong>Motif :</strong> Discussion stratégie 1L</p>
+    <h4>▸ Invités</h4>
+    <p>• Dr. CHEN (Radiologue)<br>• Dr. MARTIN (Pathologiste)<br>• Dr. DUBOIS (Pneumologue)<br>• Dr. BERNARD (Radiothérapeute)</p>
+    <h4>▸ Créneaux disponibles</h4>
+    <p>• Aujourd'hui 14h30<br>• Demain 09h00<br>• Jeudi 10h00</p>
+  `, () => {
+    addToast('✓ RCP planifiée — invitations envoyées', 'ok');
+    rcpEvents['2024-11-14'] = { title: 'RCP URGENTE — ANON-047', type: 'crit' };
+    renderCalendar();
+  });
+});
+
+/* ============================================================
+   IA AUTO-APPRENANTE
+   ============================================================ */
+let aiState = {
+  version: 'v4.2.847',
+  accuracy: 94.7,
+  cases: 2847391,
+  epochProgress: 64,
+  feedbackBuffer: 847
+};
+
+function initAI() {
+  updateAIDisplay();
+  setInterval(() => {
+    aiState.epochProgress += Math.random() * 2;
+    if (aiState.epochProgress > 100) aiState.epochProgress = 0;
+    aiState.feedbackBuffer = Math.min(1000, aiState.feedbackBuffer + Math.floor(Math.random() * 3));
+    updateAIDisplay();
+  }, 3000);
+}
+
+function updateAIDisplay() {
+  document.getElementById('aiVersion').textContent = aiState.version;
+  document.getElementById('aiAccuracy').textContent = aiState.accuracy.toFixed(1) + '%';
+  document.getElementById('aiCases').textContent = aiState.cases.toLocaleString('fr-FR');
+  document.getElementById('epochPct').textContent = Math.floor(aiState.epochProgress) + '%';
+  document.getElementById('epochBar').style.width = aiState.epochProgress + '%';
+  document.getElementById('modelVer').textContent = aiState.version;
+  document.getElementById('confIA').textContent = aiState.accuracy.toFixed(1) + '%';
+}
+
+const feedbackLog = [];
+
+document.querySelectorAll('.feedback-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const fb = btn.dataset.fb;
+    const label = { correct: '✓ Exact', partial: '◐ Partiel', incorrect: '✗ Erreur', unknown: '? Incertain' }[fb];
+    const delta = { correct: 0.3, partial: 0.1, incorrect: -0.4, unknown: 0 }[fb];
+
+    aiState.accuracy = Math.min(99.9, Math.max(80, aiState.accuracy + delta));
+    aiState.cases += 1;
+    aiState.feedbackBuffer = Math.min(1000, aiState.feedbackBuffer + 1);
+
+    if (fb === 'incorrect') {
+      aiState.version = `v4.${2 + Math.floor(Math.random() * 9)}.${800 + Math.floor(Math.random() * 200)}`;
+      document.getElementById('aiLastUpdate').textContent = 'à l\'instant';
+    }
+
+    feedbackLog.unshift({
+      type: fb,
+      label,
+      time: new Date().toTimeString().split(' ')[0]
+    });
+
+    const logEl = document.getElementById('feedbackLog');
+    logEl.innerHTML = feedbackLog.slice(0, 5).map(f => {
+      const color = { correct: 'var(--green)', partial: 'var(--yellow)', incorrect: 'var(--red)', unknown: 'var(--purple)' }[f.type];
+      return `<div style="display:flex;gap:6px;padding:2px 0;border-bottom:1px dashed rgba(0,229,255,0.1);">
+        <span style="color:var(--cyan-dim);">${f.time}</span>
+        <span style="color:${color};">${f.label}</span>
+      </div>`;
+    }).join('');
+
+    updateAIDisplay();
+    addToast(`🧠 Feedback enregistré — Précision ${aiState.accuracy.toFixed(1)}%`, delta > 0 ? 'ok' : 'warn');
+    addLog(`Feedback IA : ${label} (Δ ${delta > 0 ? '+' : ''}${delta}%)`, delta > 0 ? 'ok' : 'warn');
+  });
+});
+
+document.getElementById('btnTrainNow').addEventListener('click', () => {
+  if (aiState.feedbackBuffer < 100) {
+    addToast('⚠ Buffer insuffisant (min 100 cas)', 'warn');
+    return;
+  }
+  addToast('⚡ Ré-entraînement déclenché...', 'warn');
+  aiState.epochProgress = 0;
+  updateAIDisplay();
+
+  let ep = 0;
+  const trainInterval = setInterval(() => {
+    ep += 5;
+    aiState.epochProgress = ep;
+    updateAIDisplay();
+    if (ep >= 100) {
+      clearInterval(trainInterval);
+      aiState.version = `v4.${2 + Math.floor(Math.random() * 9)}.${800 + Math.floor(Math.random() * 200)}`;
+      aiState.accuracy = Math.min(99.9, aiState.accuracy + 0.5);
+      aiState.feedbackBuffer = 0;
+      updateAIDisplay();
+      addToast(`✓ Nouveau modèle ${aiState.version} déployé`, 'ok');
+      addToast(`📈 Précision : ${aiState.accuracy.toFixed(1)}%`, 'ok');
+      addLog(`Ré-entraînement terminé — ${aiState.version}`, 'ok');
+    }
+  }, 200);
+});
+
+/* ============================================================
+   WEBRTC RÉEL
+   ============================================================ */
+let rcpActive = false;
+let rcpRecording = false;
+let rcpSeconds = 0;
+let rcpInterval = null;
+let localStream = null;
+let peerConnections = {};
+let screenStream = null;
+
+const rtcConfig = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' }
+  ]
+};
+
+async function startLocalVideo() {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 320, height: 240, facingMode: 'user' },
+      audio: true
+    });
+    document.getElementById('localVideo').srcObject = localStream;
+    document.getElementById('webrtcStatus').innerHTML = `
+      <div><span class="k">WEBRTC :</span> <span class="v" style="color:var(--green)">ACTIF</span></div>
+      <div><span class="k">PEERS :</span> <span class="v" id="peerCount">3</span></div>
+      <div><span class="k">LATENCE :</span> <span class="v" id="rtcLatency">28 ms</span></div>
+    `;
+    document.getElementById('rtcStatus').textContent = 'STREAMING';
+    addToast('📷 Caméra et micro activés', 'ok');
+    addLog('Stream local démarré (getUserMedia)', 'ok');
+    return true;
+  } catch (err) {
+    // Fallback : pas de caméra disponible
+    addToast('⚠ Caméra indisponible — mode simulation', 'warn');
+    addLog('Fallback simulation (pas de caméra)', 'warn');
+    document.getElementById('localVideo').style.background = 'linear-gradient(135deg, #061426, #0a2440)';
+    document.getElementById('localVideo').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:24px;">👨‍⚕️</div>';
+    document.getElementById('rtcStatus').textContent = 'SIMULATED';
+    return false;
+  }
+}
+
+function stopLocalVideo() {
+  if (localStream) {
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+  }
+  if (screenStream) {
+    screenStream.getTracks().forEach(t => t.stop());
+    screenStream = null;
+  }
+  Object.values(peerConnections).forEach(pc => pc.close());
+  peerConnections = {};
+}
+
+// Simulation des pairs distants (peer "fantômes" avec vidéo canvas animée)
+function createSimulatedPeer(videoEl, name) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 320;
+  canvas.height = 240;
+  const ctx = canvas.getContext('2d');
+  let t = 0;
+
+  const stream = canvas.captureStream(20);
+
+  function draw() {
+    if (!rcpActive) return;
+    t += 0.02;
+
+    // Fond dégradé
+    const grad = ctx.createLinearGradient(0, 0, 320, 240);
+    grad.addColorStop(0, '#061426');
+    grad.addColorStop(1, '#0a2440');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 320, 240);
+
+    // Avatar flottant
+    ctx.font = '80px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(name.icon, 160, 130 + Math.sin(t * 2) * 8);
+
+    // Nom en bas
+    ctx.fillStyle = 'rgba(0, 229, 255, 0.15)';
+    ctx.fillRect(0, 220, 320, 20);
+    ctx.fillStyle = '#00e5ff';
+    ctx.font = '12px monospace';
+    ctx.fillText(name.name, 160, 235);
+
+    // Effet scanline
+    for (let i = 0; i < 240; i += 4) {
+      ctx.fillStyle = `rgba(0, 229, 255, ${0.03 + Math.random() * 0.02})`;
+      ctx.fillRect(0, i, 320, 1);
+    }
+
+    // Pastille parole
+    if (Math.random() < 0.02) {
+      ctx.fillStyle = '#00ff9d';
+      ctx.beginPath();
+      ctx.arc(300, 20, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  videoEl.srcObject = stream;
+  videoEl.play();
+  draw();
+}
+
+function toggleRCP() {
+  rcpActive = !rcpActive;
+  const bar = document.getElementById('rcpBar');
+  const grid = document.getElementById('videoGrid');
+
+  if (rcpActive) {
+    bar.classList.add('active');
+    grid.classList.add('active');
+    addToast('🎥 Session RCP LIVE démarrée', 'purple');
+    addLog('RCP WebRTC initiée', 'ok');
+
+    // Démarre la vraie vidéo locale
+    startLocalVideo().then(hasCamera => {
+      if (hasCamera) {
+        addToast('✓ Flux local établi (WebRTC)', 'ok');
+      }
+    });
+
+    // Simule les pairs distants
+    setTimeout(() => {
+      createSimulatedPeer(document.getElementById('remoteVideo2'), { name: 'Dr. CHEN', icon: '🔬' });
+      createSimulatedPeer(document.getElementById('remoteVideo3'), { name: 'Dr. MARTIN', icon: '🧬' });
+      createSimulatedPeer(document.getElementById('remoteVideo4'), { name: 'Dr. DUBOIS', icon: '🫁' });
+
+      [2, 3, 4].forEach((n, i) => {
+        setTimeout(() => {
+          document.getElementById('tile' + n).classList.add('active');
+          document.getElementById('tile' + n).style.opacity = '1';
+          addToast(`👥 Dr. ${['CHEN', 'MARTIN', 'DUBOIS'][i]} a rejoint`, 'ok');
+        }, i * 400);
+      });
+    }, 300);
+
+    // Simulation parole alternée
+    rcpInterval = setInterval(() => {
+      document.querySelectorAll('.video-tile').forEach(t => t.classList.remove('speaking'));
+      const tiles = document.querySelectorAll('.video-tile');
+      tiles[Math.floor(Math.random() * tiles.length)].classList.add('speaking');
+    }, 3500);
+
+  } else {
+    bar.classList.remove('active');
+    grid.classList.remove('active');
+    if (rcpInterval) clearInterval(rcpInterval);
+    stopRCPRecording();
+    stopLocalVideo();
+
+    [2, 3, 4].forEach(n => {
+      const tile = document.getElementById('tile' + n);
+      tile.classList.remove('active', 'speaking');
+      tile.style.opacity = '0';
+    });
+    document.querySelectorAll('.video-tile').forEach(t => t.classList.remove('speaking'));
+
+    document.getElementById('rtcStatus').textContent = 'STANDBY';
+    document.getElementById('webrtcStatus').innerHTML = `
+      <div><span class="k">WEBRTC :</span> <span class="v" style="color:var(--green)">PRÊT</span></div>
+      <div><span class="k">PEERS :</span> <span class="v" id="peerCount">0</span></div>
+      <div><span class="k">LATENCE :</span> <span class="v" id="rtcLatency">-- ms</span></div>
+    `;
+
+    addToast('⏹ Session RCP terminée', 'warn');
+    addLog('RCP WebRTC clôturée', '');
+  }
+}
+
+function startRCPRecording() {
+  if (rcpRecording) return;
+  rcpRecording = true;
+  rcpSeconds = 0;
+  document.getElementById('rcpRecord').classList.add('recording');
+  document.getElementById('rcpRecord').textContent = '⏹ Stop';
+  window._rcpRecTimer = setInterval(() => {
+    rcpSeconds++;
+    const m = String(Math.floor(rcpSeconds / 60)).padStart(2, '0');
+    const s = String(rcpSeconds % 60).padStart(2, '0');
+    document.getElementById('rcpTimer').textContent = `${m}:${s}`;
+  }, 1000);
+  addToast('⏺ Enregistrement RCP démarré', 'crit');
+  addLog('Recording RCP — MediaRecorder started', 'warn');
+}
+
+function stopRCPRecording() {
+  if (!rcpRecording) return;
+  rcpRecording = false;
+  document.getElementById('rcpRecord').classList.remove('recording');
+  document.getElementById('rcpRecord').textContent = '⏺ Enregistrer';
+  if (window._rcpRecTimer) clearInterval(window._rcpRecTimer);
+  if (rcpSeconds > 0) addToast(`✓ Enregistrement sauvegardé (${rcpSeconds}s)`, 'ok');
+  rcpSeconds = 0;
+  document.getElementById('rcpTimer').textContent = '00:00';
+}
+
+document.getElementById('btnRCP').addEventListener('click', toggleRCP);
+document.getElementById('btnRCP2').addEventListener('click', toggleRCP);
+
+document.getElementById('rcpMic').addEventListener('click', e => {
+  e.currentTarget.classList.toggle('recording');
+  const muted = e.currentTarget.classList.contains('recording');
+  if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = !muted);
+  document.querySelector('.video-tile[data-p="1"]').classList.toggle('muted', muted);
+  addToast(muted ? '🎙 Micro coupé' : '🎙 Micro actif', muted ? 'warn' : 'ok');
+});
+
+document.getElementById('rcpCam').addEventListener('click', e => {
+  e.currentTarget.classList.toggle('recording');
+  const off = e.currentTarget.classList.contains('recording');
+  if (localStream) localStream.getVideoTracks().forEach(t => t.enabled = !off);
+  document.querySelector('.video-tile[data-p="1"]').classList.toggle('muted', off);
+  addToast(off ? '📷 Caméra coupée' : '📷 Caméra active', off ? 'warn' : 'ok');
+});
+
+document.getElementById('rcpScreen').addEventListener('click', async e => {
+  e.currentTarget.classList.toggle('recording');
+  const sharing = e.currentTarget.classList.contains('recording');
+  if (sharing) {
+    try {
+      screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      addToast('📺 Partage d\'écran actif', 'ok');
+      addLog('getDisplayMedia activé', 'ok');
+      screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+        e.currentTarget.classList.remove('recording');
+        screenStream = null;
+        addToast('📺 Partage terminé', 'warn');
+      });
+    } catch {
+      addToast('📺 Partage d\'écran simulé', 'warn');
+    }
+  } else {
+    if (screenStream) {
+      screenStream.getTracks().forEach(t => t.stop());
+      screenStream = null;
+    }
+    addToast('📺 Partage arrêté', 'warn');
+  }
+});
+
+document.getElementById('rcpRecord').addEventListener('click', () => {
+  if (rcpRecording) stopRCPRecording();
+  else startRCPRecording();
+});
+
+document.getElementById('rcpEnd').addEventListener('click', toggleRCP);
 
 /* ============================================================
    UI LOGIC
@@ -2542,7 +1829,6 @@ setInterval(() => {
   document.getElementById('statusTime').textContent = new Date().toTimeString().split(' ')[0];
 }, 1000);
 
-// Patients
 const patientData = {
   'ANON-047': { name: 'ANON-047', tnm: 'T4 N3 M1b', stage: 4, pathology: 'NSCLC — Adénocarcinome (EGFR-)', location: 'Lobe supérieur droit — apex' },
   'ANON-052': { name: 'ANON-052', tnm: 'T3 N2 M0', stage: 3, pathology: 'NSCLC — Épidermoïde', location: 'Lobe inférieur gauche' },
@@ -2572,7 +1858,6 @@ document.getElementById('patientSearch').addEventListener('input', e => {
   });
 });
 
-// Sliders
 document.getElementById('sDensity').addEventListener('input', e => {
   document.getElementById('vDensity').textContent = e.target.value + '%';
   primaryTumor.scale.setScalar(e.target.value / 85);
@@ -2593,12 +1878,10 @@ document.getElementById('sOpacity').addEventListener('input', e => {
   updatePrompt();
 });
 
-// Tags
 document.querySelectorAll('.tag').forEach(tag => {
   tag.addEventListener('click', () => { tag.classList.toggle('active'); updatePrompt(); });
 });
 
-// Stages
 document.querySelectorAll('.stage-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('active'));
@@ -2611,18 +1894,17 @@ function updateStage(stage) {
   const widths = [25, 50, 75, 85];
   document.getElementById('timelineFill').style.width = widths[stage-1] + '%';
   document.getElementById('timelineMarker').style.left = widths[stage-1] + '%';
-  const tumorScales = [0.3, 0.5, 0.75, 1];
-  const metasVisible = [2, 5, 10, 14];
+  const scales = [0.3, 0.5, 0.75, 1];
+  const metas = [2, 5, 10, 14];
   const opacities = [0.7, 0.55, 0.4, 0.32];
-  primaryTumor.scale.setScalar(tumorScales[stage-1]);
-  metastases.forEach((m, i) => m.visible = i < metasVisible[stage-1]);
+  primaryTumor.scale.setScalar(scales[stage-1]);
+  metastases.forEach((m, i) => m.visible = i < metas[stage-1]);
   [lungLeft, lungRight].forEach(l => {
     l.userData.solid.material.opacity = opacities[stage-1] * 0.34;
     l.userData.wire.material.opacity = opacities[stage-1];
   });
 }
 
-// Tabs
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -2630,10 +1912,10 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     document.querySelector(`[data-content="${tab.dataset.tab}"]`).classList.add('active');
     if (tab.dataset.tab === 'charts') setTimeout(initCharts, 50);
+    if (tab.dataset.tab === 'cal') renderCalendar();
   });
 });
 
-// View tools
 document.querySelectorAll('.vp-tool[data-view]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.vp-tool[data-view]').forEach(b => {
@@ -2652,29 +1934,23 @@ document.querySelectorAll('.vp-tool[data-view]').forEach(btn => {
   });
 });
 
-// Prompt
 function updatePrompt() {
-  const pathology = document.getElementById('fPathology').value;
-  const location = document.getElementById('fLocation').value;
+  const p = document.getElementById('fPathology').value;
+  const l = document.getElementById('fLocation').value;
   const tags = [...document.querySelectorAll('.tag.active')].map(t => t.textContent).join(', ');
-  const density = document.getElementById('vDensity').textContent;
-  const meta = document.getElementById('vMeta').textContent;
-  const opacity = document.getElementById('vOpacity').textContent;
   document.getElementById('generatedPrompt').value =
-    `Hologramme médical 3D — ${pathology}. Localisation : ${location}. ` +
-    `Modificateurs : ${tags}. Densité : ${density}, métastases : ${meta}, opacité sain : ${opacity}. ` +
-    `Rendu : wireframe + glow + 8K anatomique clinique.`;
+    `Hologramme 3D — ${p}. Loc : ${l}. Modif : ${tags}. Densité ${document.getElementById('vDensity').textContent}, ` +
+    `${document.getElementById('vMeta').textContent} métastases, opacité sain ${document.getElementById('vOpacity').textContent}.`;
 }
 
 document.getElementById('fPathology').addEventListener('change', updatePrompt);
 document.getElementById('fLocation').addEventListener('input', updatePrompt);
 
 document.getElementById('btnGenerate').addEventListener('click', () => {
-  addToast('⚡ Génération IA en cours...', 'warn');
-  setTimeout(() => { updatePrompt(); addToast('✓ Modèle régénéré (94.7%)', 'ok'); }, 900);
+  addToast('⚡ Génération IA...', 'warn');
+  setTimeout(() => { updatePrompt(); addToast('✓ Modèle régénéré', 'ok'); }, 900);
 });
 
-// Actions
 document.getElementById('btnPause').addEventListener('click', e => {
   isPaused = !isPaused;
   e.currentTarget.textContent = isPaused ? '▶' : '⏸';
@@ -2691,161 +1967,17 @@ document.getElementById('btnReset').addEventListener('click', () => {
   addToast('↺ Réinitialisé', 'ok');
 });
 
-document.getElementById('btnSnapshot').addEventListener('click', () => {
-  addToast('📸 Snapshot capturé', 'ok');
-});
+document.getElementById('btnSnapshot').addEventListener('click', () => addToast('📸 Snapshot capturé', 'ok'));
 
-// ============================================================
-// MODE RCP COLLABORATIF
-// ============================================================
-let rcpActive = false;
-let rcpRecording = false;
-let rcpSeconds = 0;
-let rcpInterval = null;
-
-function toggleRCP() {
-  rcpActive = !rcpActive;
-  const bar = document.getElementById('rcpBar');
-  const participants = document.querySelectorAll('.rcp-participant');
-
-  if (rcpActive) {
-    bar.classList.add('active');
-    participants.forEach((p, i) => {
-      setTimeout(() => p.classList.add('active'), i * 200);
-    });
-    addToast('🎥 Session RCP démarrée', 'purple');
-    addToast('👥 4 participants connectés', 'purple');
-    addLog('RCP collaborative démarrée', 'ok');
-
-    // Simulation parole alternée
-    startSpeakingSimulation();
-  } else {
-    bar.classList.remove('active');
-    participants.forEach(p => p.classList.remove('active'));
-    if (rcpInterval) clearInterval(rcpInterval);
-    stopRCPRecording();
-    addToast('⏹ Session RCP terminée', 'warn');
-  }
-}
-
-function startSpeakingSimulation() {
-  rcpInterval = setInterval(() => {
-    document.querySelectorAll('.rcp-participant').forEach(p => p.classList.remove('speaking'));
-    const randomP = document.querySelectorAll('.rcp-participant')[Math.floor(Math.random() * 4)];
-    if (randomP) randomP.classList.add('speaking');
-  }, 3500);
-}
-
-function startRCPRecording() {
-  if (rcpRecording) return;
-  rcpRecording = true;
-  rcpSeconds = 0;
-  document.getElementById('rcpRecord').classList.add('recording');
-  document.getElementById('rcpRecord').textContent = '⏹ Stop';
-  window._rcpRecTimer = setInterval(() => {
-    rcpSeconds++;
-    const m = String(Math.floor(rcpSeconds / 60)).padStart(2, '0');
-    const s = String(rcpSeconds % 60).padStart(2, '0');
-    document.getElementById('rcpTimer').textContent = `${m}:${s}`;
-  }, 1000);
-  addToast('⏺ Enregistrement RCP démarré', 'crit');
-}
-
-function stopRCPRecording() {
-  rcpRecording = false;
-  document.getElementById('rcpRecord').classList.remove('recording');
-  document.getElementById('rcpRecord').textContent = '⏺ Enregistrer';
-  if (window._rcpRecTimer) clearInterval(window._rcpRecTimer);
-  if (rcpSeconds > 0) addToast('✓ Enregistrement sauvegardé', 'ok');
-  rcpSeconds = 0;
-  document.getElementById('rcpTimer').textContent = '00:00';
-}
-
-document.getElementById('btnRCP').addEventListener('click', toggleRCP);
-document.getElementById('btnRCP2').addEventListener('click', toggleRCP);
-
-document.getElementById('rcpMic').addEventListener('click', e => {
-  e.currentTarget.classList.toggle('recording');
-  const isMuted = e.currentTarget.classList.contains('recording');
-  addToast(isMuted ? '🎙 Micro coupé' : '🎙 Micro actif', isMuted ? 'warn' : 'ok');
-});
-
-document.getElementById('rcpScreen').addEventListener('click', e => {
-  e.currentTarget.classList.toggle('recording');
-  addToast('📺 Partage d\'écran activé', 'ok');
-});
-
-document.getElementById('rcpRecord').addEventListener('click', () => {
-  if (rcpRecording) stopRCPRecording();
-  else startRCPRecording();
-});
-
-document.getElementById('rcpEnd').addEventListener('click', () => {
-  toggleRCP();
-});
-
-// CR
-document.getElementById('btnGenCR').addEventListener('click', () => {
-  const cr = `COMPTE-RENDU ONCOLOGIQUE
-
-Patient : ANON-047 — Homme, 64 ans
-Pathologie : NSCLC — Adénocarcinome (EGFR sauvage)
-Localisation : Lobe supérieur droit — apex
-Stade : T4 N3 M1b (IVB — 8ème TNM)
-
-IMAGERIE :
-- Tumeur primitive 8.4 cm, nécrose 62%
-- 14 nodules métastatiques bilatéraux
-- 7/12 ganglions (N3), épanchement 450 mL
-
-BIOLOGIE :
-- LDH : 312 UI/L · CA 15-3 : 48 U/mL
-- PD-L1 TPS 45% · KRAS G12C 32%
-
-DÉCISION :
-1. Carboplatine AUC 5 + Pémétrexed 500 mg/m²
-2. Pembrolizumab 200 mg Q3W
-3. Réévaluation TDM à 6-8 semaines
-
-Signé : Dr. M. LEFEBVRE
-${new Date().toLocaleString('fr-FR')}`;
-  document.getElementById('reportPreview').value = cr;
-  addToast('✓ CR généré', 'ok');
-});
-
-document.getElementById('btnExportPDF').addEventListener('click', () => {
-  if (!document.getElementById('reportPreview').value) return addToast('⚠ Générer CR d\'abord', 'warn');
-  addToast('⬇ Export PDF...', 'warn');
-  setTimeout(() => addToast('✓ PDF transmis au DPI', 'ok'), 900);
-});
-
-document.getElementById('btnExportHL7').addEventListener('click', () => {
-  addToast('🔗 HL7 FHIR R4...', 'warn');
-  setTimeout(() => addToast('✓ Transmis (ACC 200)', 'ok'), 800);
-});
-
-document.getElementById('btnValidateCR').addEventListener('click', () => {
-  openModal('◈ Signature électronique', `
-    <h4>▸ Signature qualifiée eIDAS</h4>
-    <p>Certificat <strong>${currentUser.name}</strong> · RPPS ${currentUser.rpps}</p>
-    <h4>▸ Traçabilité</h4>
-    <p>Session : <strong>SES-8271-A4</strong><br>
-    Date : ${new Date().toLocaleString('fr-FR')}<br>
-    Hash SHA-256 : <code style="color:var(--cyan); font-size:10px;">a4f8e7b2c91d...</code></p>
-  `, () => addToast('✓ CR signé et archivé', 'ok'));
-});
-
-// Modal
 function openModal(title, content, onConfirm) {
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').innerHTML = content;
   document.getElementById('modalOverlay').classList.add('active');
-  const confirmBtn = document.getElementById('modalConfirm');
-  const newBtn = confirmBtn.cloneNode(true);
-  confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
-  newBtn.addEventListener('click', () => { if (onConfirm) onConfirm(); closeModal(); });
+  const c = document.getElementById('modalConfirm');
+  const n = c.cloneNode(true);
+  c.parentNode.replaceChild(n, c);
+  n.addEventListener('click', () => { if (onConfirm) onConfirm(); closeModal(); });
 }
-
 function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
 document.getElementById('modalClose').addEventListener('click', closeModal);
 document.getElementById('modalCancel').addEventListener('click', closeModal);
@@ -2853,7 +1985,6 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
   if (e.target.id === 'modalOverlay') closeModal();
 });
 
-// Toasts
 function addToast(msg, type = '') {
   const c = document.getElementById('toastContainer');
   const t = document.createElement('div');
@@ -2867,21 +1998,19 @@ function addToast(msg, type = '') {
     setTimeout(() => t.remove(), 400);
   }, 3500);
 }
-
 function addLog(msg, type = '') { console.log(`[${new Date().toTimeString().split(' ')[0]}] ${msg}`); }
 
-// Logs auto
 setInterval(() => {
   const logs = [
     { m: 'Sync PACS terminée', t: 'ok' },
     { m: 'Analyse IA : 3 voxels', t: 'warn' },
-    { m: 'Segmentation RECIST MAJ', t: 'ok' }
+    { m: 'Segmentation MAJ', t: 'ok' },
+    { m: 'Heartbeat WebRTC OK', t: '' }
   ];
   const l = logs[Math.floor(Math.random() * logs.length)];
   addLog(l.m, l.t);
 }, 12000);
 
-// Init
 updatePrompt();
 </script>
 
